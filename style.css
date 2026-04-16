@@ -1,4 +1,5 @@
 :root {
+    color-scheme: dark;
     --bg-night: #040912;
     --bg-mid: #071120;
     --bg-deep: #09142a;
@@ -20,6 +21,7 @@
     --header-offset: 112px;
 }
 
+:root[data-theme="light"],
 body.light-mode {
     --bg-night: #eef8fb;
     --bg-mid: #e2f1f8;
@@ -63,6 +65,7 @@ body {
     position: relative;
 }
 
+:root[data-theme="light"] body,
 body.light-mode {
     background:
         radial-gradient(circle at 15% 15%, rgba(2, 157, 134, 0.08), transparent 22%),
@@ -75,6 +78,11 @@ body.light-mode {
     color: var(--text-main);
 }
 
+:root[data-theme="light"] {
+    color-scheme: light;
+}
+
+:root[data-theme="light"] ::selection,
 body.light-mode ::selection {
     background: rgba(2, 157, 134, 0.18);
 }
