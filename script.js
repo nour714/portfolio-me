@@ -8,6 +8,11 @@ const ROLE_TYPING_SPEED = 70;
 const ROLE_DELETE_SPEED = 40;
 const ROLE_DELAY = 1500;
 const MOBILE_NAV_BREAKPOINT = 768;
+const THEME_STORAGE_KEY = "preferred-theme";
+const THEME_META_COLORS = {
+    dark: "#040912",
+    light: "#eef8fb"
+};
 const CARD_SELECTOR = [
     ".about-panel",
     ".about-node",
@@ -627,32 +632,94 @@ const storage = {
     },
     set: (key, value) => {
         try { localStorage.setItem(key, value); } catch {}
+    },
+    remove: (key) => {
+        try { localStorage.removeItem(key); } catch {}
     }
 };
 
 /**
  * Theme Management
  */
-const initTheme = () => {
-    const applyTheme = (theme) => {
-        const isLight = theme === "light";
-        elements.body.classList.toggle("light-mode", isLight);
-        if (elements.themeToggle) {
-            elements.themeToggle.setAttribute("aria-pressed", String(isLight));
-            elements.themeToggle.title = isLight ? "Switch to dark mode" : "Switch to light mode";
-            const toggleText = elements.themeToggle.querySelector(".theme-toggle-text");
-            if (toggleText) toggleText.textContent = isLight ? "Dark" : "Light";
-        }
-        window.dispatchEvent(new Event("themechange"));
-    };
+const normalizeTheme = (theme) => theme === "light" ? "light" : "dark";
 
-    const savedTheme = storage.get("preferred-theme", "dark");
-    applyTheme(savedTheme);
+const getThemeMetaTag = () => {
+    let meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) return meta;
+
+    meta = document.createElement("meta");
+    meta.name = "theme-color";
+    document.head.appendChild(meta);
+    return meta;
+};
+
+const syncThemeToggleButton = (button, theme) => {
+    if (!button) return;
+
+    const isLight = theme === "light";
+    const nextThemeLabel = isLight ? "dark" : "light";
+    const nextThemeText = isLight ? "Dark" : "Light";
+    const title = `Switch to ${nextThemeLabel} mode`;
+    const toggleText = button.querySelector(".theme-toggle-text");
+
+    button.setAttribute("aria-pressed", String(isLight));
+    button.setAttribute("aria-label", title);
+    button.title = title;
+
+    if (toggleText) {
+        toggleText.textContent = nextThemeText;
+    } else if (!button.dataset.staticLabel) {
+        button.textContent = nextThemeText;
+    }
+};
+
+const applyDocumentTheme = (theme) => {
+    const normalizedTheme = normalizeTheme(theme);
+    document.documentElement.dataset.theme = normalizedTheme;
+    document.documentElement.style.colorScheme = normalizedTheme;
+
+    if (elements.body) {
+        elements.body.classList.toggle("light-mode", normalizedTheme === "light");
+    }
+
+    getThemeMetaTag().setAttribute("content", THEME_META_COLORS[normalizedTheme]);
+
+    document.querySelectorAll(".theme-toggle, [data-theme-toggle='manual']").forEach((button) => {
+        syncThemeToggleButton(button, normalizedTheme);
+    });
+
+    window.dispatchEvent(new Event("themechange"));
+    return normalizedTheme;
+};
+
+const setPreferredTheme = (theme) => {
+    const normalizedTheme = normalizeTheme(theme);
+
+    if (normalizedTheme === "light") {
+        storage.set(THEME_STORAGE_KEY, normalizedTheme);
+    } else {
+        storage.remove(THEME_STORAGE_KEY);
+    }
+
+    return applyDocumentTheme(normalizedTheme);
+};
+
+window.PortfolioTheme = {
+    getTheme: () => normalizeTheme(storage.get(THEME_STORAGE_KEY, document.documentElement.dataset.theme || "dark")),
+    applyTheme: (theme) => applyDocumentTheme(theme),
+    setTheme: (theme) => setPreferredTheme(theme),
+    toggleTheme: () => {
+        const currentTheme = document.body?.classList.contains("light-mode") ? "light" : normalizeTheme(document.documentElement.dataset.theme || "dark");
+        return setPreferredTheme(currentTheme === "light" ? "dark" : "light");
+    },
+    syncButton: (button) => syncThemeToggleButton(button, document.body?.classList.contains("light-mode") ? "light" : normalizeTheme(document.documentElement.dataset.theme || "dark"))
+};
+
+const initTheme = () => {
+    applyDocumentTheme(storage.get(THEME_STORAGE_KEY, "dark"));
 
     elements.themeToggle?.addEventListener("click", () => {
-        const next = elements.body.classList.contains("light-mode") ? "dark" : "light";
-        applyTheme(next);
-        storage.set("preferred-theme", next);
+        window.PortfolioTheme.toggleTheme();
     });
 };
 
