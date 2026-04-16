@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BikeStore Preview</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #08111d;
+            --panel: rgba(12, 21, 37, 0.92);
+            --line: rgba(123, 163, 200, 0.16);
+            --text: #f2f8fc;
+            --muted: #8ea7c2;
+            --accent: #8cffb6;
+            --accent-2: #33d1ff;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top right, rgba(140, 255, 182, 0.14), transparent 28%),
+                linear-gradient(180deg, #08111d 0%, #0b1727 100%);
+        }
+        .shell {
+            padding: 28px;
+            display: grid;
+            gap: 20px;
+        }
+        .panel {
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: var(--panel);
+            box-shadow: 0 20px 46px rgba(0, 0, 0, 0.28);
+        }
+        .hero {
+            padding: 24px;
+        }
+        .meta, .table small { color: var(--muted); }
+        h1, h2, p { margin: 0; }
+        h1 {
+            margin-top: 8px;
+            font-size: clamp(1.8rem, 4vw, 2.9rem);
+            line-height: 1.08;
+        }
+        .stats {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .stat {
+            padding: 18px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .stat strong {
+            display: block;
+            margin-top: 8px;
+            font-size: 1.45rem;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 20px;
+        }
+        .chart,
+        .table {
+            padding: 22px;
+        }
+        .bars {
+            margin-top: 20px;
+            height: 280px;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            align-items: end;
+            gap: 14px;
+        }
+        .bar {
+            border-radius: 18px 18px 10px 10px;
+            background: linear-gradient(180deg, var(--accent), var(--accent-2));
+            box-shadow: 0 10px 26px rgba(51, 209, 255, 0.18);
+        }
+        .bar:nth-child(1) { height: 40%; }
+        .bar:nth-child(2) { height: 55%; }
+        .bar:nth-child(3) { height: 68%; }
+        .bar:nth-child(4) { height: 58%; }
+        .bar:nth-child(5) { height: 83%; }
+        .bar:nth-child(6) { height: 72%; }
+        .rows {
+            margin-top: 18px;
+            display: grid;
+            gap: 12px;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 14px;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .row:last-child { border-bottom: 0; }
+        @media (max-width: 900px) {
+            .stats,
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <section class="panel hero">
+            <div class="meta">Retail intelligence dashboard</div>
+            <h1>See store performance, revenue trends, and channel momentum in one view.</h1>
+            <p style="margin-top:14px; max-width:58ch; color:var(--muted); line-height:1.75;">
+                BikeStore Data Intelligence turns raw SQL records into a cleaner analytics layer for
+                sales tracking, store comparison, and decision-ready reporting.
+            </p>
+
+            <div class="stats">
+                <div class="stat"><span class="meta">Revenue</span><strong>$92k</strong></div>
+                <div class="stat"><span class="meta">Orders</span><strong>1,482</strong></div>
+                <div class="stat"><span class="meta">Top Region</span><strong>West</strong></div>
+                <div class="stat"><span class="meta">Growth</span><strong>+18%</strong></div>
+            </div>
+        </section>
+
+        <section class="layout">
+            <div class="panel chart">
+                <h2>Monthly Revenue Trend</h2>
+                <div class="bars">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+            </div>
+
+            <div class="panel table">
+                <h2>Top Product Lines</h2>
+                <div class="rows">
+                    <div class="row">
+                        <div><strong>Road Series</strong><br><small>High-value buyers</small></div>
+                        <span>412 units</span>
+                        <strong>+21%</strong>
+                    </div>
+                    <div class="row">
+                        <div><strong>Trail Series</strong><br><small>Weekend demand</small></div>
+                        <span>338 units</span>
+                        <strong>+14%</strong>
+                    </div>
+                    <div class="row">
+                        <div><strong>City Line</strong><br><small>Urban commuters</small></div>
+                        <span>296 units</span>
+                        <strong>+10%</strong>
+                    </div>
+                    <div class="row">
+                        <div><strong>Accessories</strong><br><small>Cross-sell bundle</small></div>
+                        <span>628 units</span>
+                        <strong>+26%</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

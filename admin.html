@@ -1,0 +1,2957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio admin dashboard for Nour, Web Developer.">
+    <title>Content Studio | Nour Admin</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+
+    
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body.admin-only {
+            overflow: hidden;
+        }
+        body.admin-only > header,
+        body.admin-only > main,
+        body.admin-only > footer,
+        body.admin-only .admin-launch {
+            display: none;
+        }
+        body.admin-only [data-admin-close],
+        body.admin-only #admin-close {
+            display: none;
+        }
+        body.admin-only.admin-auth-loading #admin-dashboard,
+        body.admin-only.admin-auth-required #admin-dashboard {
+            display: none;
+        }
+        body.admin-only.admin-auth-loading #admin-login-section,
+        body.admin-only.admin-auth-required #admin-login-section {
+            display: flex !important;
+        }
+        body.admin-only.admin-authenticated #admin-dashboard {
+            display: block;
+        }
+        body.admin-only.admin-authenticated #admin-login-section {
+            display: none !important;
+        }
+        .admin-dashboard {
+            position: fixed;
+            inset: 0;
+            z-index: 30;
+            padding: 6px 8px 10px;
+            overflow: hidden;
+        }
+        .admin-shell {
+            width: min(1364px, 100%);
+            height: calc(100vh - 16px);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 250px minmax(0, 1fr) 372px;
+            gap: 0;
+            align-items: stretch;
+            border-radius: 28px;
+            border: 1px solid rgba(126, 152, 196, 0.14);
+            background:
+                radial-gradient(circle at top, rgba(65, 118, 255, 0.05), transparent 28%),
+                linear-gradient(180deg, rgba(15, 25, 50, 0.96), rgba(10, 19, 38, 0.97));
+            box-shadow:
+                0 30px 90px rgba(0, 0, 0, 0.38),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            overflow: hidden;
+        }
+        .admin-sidebar,
+        .admin-main,
+        .admin-preview {
+            min-height: 0;
+            background: transparent;
+        }
+        .admin-sidebar {
+            height: 100%;
+            padding: 22px 16px 18px;
+            display: grid;
+            gap: 16px;
+            align-content: start;
+            overflow: auto;
+            border-right: 1px solid rgba(126, 152, 196, 0.14);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(22, 242, 209, 0.28) transparent;
+        }
+        .admin-sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .admin-sidebar::-webkit-scrollbar-thumb {
+            border-radius: 999px;
+            background: rgba(22, 242, 209, 0.22);
+        }
+        .admin-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 800;
+            font-size: 1.02rem;
+            letter-spacing: -0.02em;
+        }
+        .admin-brand-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            box-shadow: 0 0 18px rgba(22, 242, 209, 0.4);
+        }
+        .admin-sidebar-copy {
+            color: var(--text-soft);
+            font-size: 0.74rem;
+            line-height: 1.9;
+            max-width: 18ch;
+            margin: 8px 4px 6px;
+        }
+        .admin-nav {
+            display: grid;
+            gap: 6px;
+            margin-top: 2px;
+        }
+        .admin-nav-link {
+            width: 100%;
+            min-height: 42px;
+            padding: 0 12px;
+            border-radius: 14px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-soft);
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            box-shadow: none;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .admin-nav-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .admin-nav-link.is-active {
+            color: var(--text-main);
+            border-color: rgba(22, 242, 209, 0.4);
+            background: linear-gradient(135deg, rgba(60, 124, 255, 0.3), rgba(22, 242, 209, 0.08));
+            transform: none;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 10px 22px rgba(11, 24, 48, 0.2);
+        }
+        .admin-sidebar-footer {
+            margin-top: auto;
+            display: grid;
+            gap: 12px;
+            padding-top: 12px;
+        }
+        .admin-sidebar-footer .admin-btn {
+            min-height: 36px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 0.76rem;
+        }
+        .admin-btn {
+            min-height: 36px;
+            padding: 0 14px;
+            border-radius: 14px;
+            border: 1px solid var(--line-soft);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.84rem;
+            transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+        .admin-btn:hover {
+            transform: translateY(-1px);
+        }
+        .admin-btn-primary {
+            color: var(--button-text);
+            border-color: transparent;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            box-shadow: 0 12px 24px rgba(22, 242, 209, 0.18);
+        }
+        .admin-btn-ghost {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .admin-btn-ghost:hover {
+            border-color: var(--line-strong);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .admin-btn-danger {
+            background: rgba(255, 82, 82, 0.08);
+        }
+        .admin-main {
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr);
+            min-width: 0;
+            height: 100%;
+            border-right: 1px solid rgba(126, 152, 196, 0.14);
+            padding: 0 18px;
+        }
+        .admin-header {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 18px;
+            align-items: start;
+            position: sticky;
+            top: 0;
+            z-index: 8;
+            margin: 0;
+            padding: 18px 0 14px;
+            background: linear-gradient(180deg, rgba(14, 25, 51, 0.98), rgba(14, 25, 51, 0.96));
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: none;
+        }
+        .admin-header::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(148, 183, 255, 0.04), rgba(148, 183, 255, 0.2), rgba(148, 183, 255, 0.04));
+        }
+        .admin-header > div:first-child {
+            min-width: 0;
+        }
+        body.light-mode .admin-header {
+            background:
+                linear-gradient(180deg, rgba(244, 249, 252, 0.96), rgba(244, 249, 252, 0.9)),
+                var(--surface-strong);
+            box-shadow: 0 16px 30px rgba(28, 67, 86, 0.12);
+        }
+        .admin-kicker {
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .admin-title {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(1.7rem, 2.2vw, 2.05rem);
+            font-weight: 700;
+            line-height: 1.04;
+            letter-spacing: -0.04em;
+            margin-bottom: 12px;
+        }
+        .admin-subtitle {
+            max-width: 62ch;
+            color: var(--text-soft);
+            font-size: 0.76rem;
+            line-height: 1.6;
+        }
+        .admin-header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: nowrap;
+            padding-top: 2px;
+        }
+        .admin-header-actions .admin-btn,
+        .admin-header-actions .admin-save-state {
+            min-height: 36px;
+            padding: 0 16px;
+            border-radius: 18px;
+            font-size: 0.74rem;
+            font-weight: 700;
+        }
+        .admin-save-state {
+            border-radius: 999px;
+            border: 1px solid rgba(22, 242, 209, 0.28);
+            background: rgba(22, 242, 209, 0.09);
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        }
+        .admin-header-actions .admin-btn-ghost {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(148, 183, 255, 0.14);
+        }
+        .admin-header-actions .admin-btn-primary {
+            border-color: transparent;
+            box-shadow:
+                0 10px 24px rgba(40, 165, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+        .admin-content {
+            min-height: 0;
+            padding: 18px 0 18px 0;
+            overflow: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(148, 183, 255, 0.24) transparent;
+        }
+        .admin-content::-webkit-scrollbar {
+            width: 10px;
+        }
+        .admin-content::-webkit-scrollbar-thumb {
+            border-radius: 999px;
+            background: rgba(148, 183, 255, 0.24);
+        }
+        .admin-section {
+            display: none;
+            gap: 18px;
+            grid-template-columns: minmax(0, 1fr);
+            align-items: start;
+        }
+        .admin-section.is-active {
+            display: grid;
+        }
+        .admin-card {
+            border-radius: 24px;
+            border: 1px solid rgba(82, 110, 156, 0.28);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent 100%),
+                rgba(18, 30, 58, 0.72);
+            padding: 20px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+        body.light-mode .admin-card {
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 100%),
+                rgba(255, 255, 255, 0.68);
+        }
+        .admin-card h3 {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.82rem;
+            margin-bottom: 18px;
+            letter-spacing: -0.02em;
+        }
+        .admin-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .admin-field {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .admin-field:last-child {
+            margin-bottom: 0;
+        }
+        .admin-field span {
+            color: var(--text-soft);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .admin-field input,
+        .admin-field textarea,
+        .admin-field select {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid rgba(88, 112, 154, 0.34);
+            background: rgba(7, 15, 31, 0.9);
+            color: var(--text-main);
+            padding: 12px 14px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        body.light-mode .admin-field input,
+        body.light-mode .admin-field textarea,
+        body.light-mode .admin-field select {
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .admin-field input:focus,
+        .admin-field textarea:focus,
+        .admin-field select:focus {
+            border-color: var(--line-strong);
+            box-shadow: 0 0 0 4px rgba(22, 242, 209, 0.08);
+        }
+        .admin-list {
+            display: grid;
+            gap: 12px;
+        }
+        .admin-list:empty::before {
+            content: "No items yet.";
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            padding: 14px 0 0;
+        }
+        .admin-upload {
+            position: relative;
+            border-radius: 18px;
+            border: 1px dashed rgba(22, 242, 209, 0.28);
+            background: rgba(7, 15, 31, 0.62);
+            overflow: hidden;
+            min-height: 108px;
+        }
+        .admin-upload input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .admin-upload-body {
+            min-height: 108px;
+            display: grid;
+            place-content: center;
+            text-align: center;
+            gap: 6px;
+            color: var(--text-soft);
+            padding: 16px;
+        }
+        .admin-upload-body strong {
+            color: var(--text-main);
+        }
+        .admin-preview {
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr) auto;
+            height: 100%;
+            padding: 14px 14px 16px;
+            display: grid;
+            gap: 12px;
+            align-self: stretch;
+        }
+        .admin-preview-head,
+        .admin-preview-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .admin-preview-head span {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.92rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .admin-preview-frame {
+            border-radius: 24px;
+            border: 1px solid rgba(86, 112, 154, 0.26);
+            background: linear-gradient(180deg, rgba(5, 13, 31, 0.96), rgba(3, 9, 24, 0.98));
+            overflow: hidden;
+            min-height: 0;
+            padding: 12px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        }
+        .admin-preview-sandbox,
+        .admin-preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            border-radius: 18px;
+        }
+        .admin-preview-note {
+            color: var(--text-soft);
+            font-size: 0.72rem;
+        }
+        @media (max-width: 1320px) {
+            .admin-shell {
+                grid-template-columns: 236px minmax(0, 1fr);
+            }
+            .admin-preview {
+                grid-column: 1 / -1;
+            }
+            .admin-preview-frame,
+            .admin-preview-sandbox,
+            .admin-preview-iframe {
+                height: 52vh;
+            }
+        }
+        @media (max-width: 980px) {
+            .admin-dashboard {
+                padding: 10px;
+                overflow: auto;
+            }
+            .admin-shell {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            .admin-sidebar {
+                min-height: auto;
+                max-height: none;
+                border-right: 0;
+                border-bottom: 1px solid rgba(126, 152, 196, 0.14);
+            }
+            .admin-header {
+                top: 0;
+                padding: 18px 0 14px;
+                grid-template-columns: 1fr;
+            }
+            .admin-section,
+            .admin-section.is-active {
+                grid-template-columns: 1fr;
+            }
+            .admin-main {
+                border-right: 0;
+                padding: 0 16px;
+            }
+        }
+        @media (max-width: 640px) {
+            .admin-header {
+                padding: 16px 0 12px;
+            }
+            .admin-header-actions {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+            .admin-header-actions .admin-btn,
+            .admin-header-actions .admin-save-state {
+                flex: 1 1 auto;
+            }
+            .admin-main,
+            .admin-sidebar,
+            .admin-preview {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+            .admin-card-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body class="admin-only admin-auth-loading">
+    <canvas id="constellation-canvas" aria-hidden="true"></canvas>
+
+    <div class="bg-effects" aria-hidden="true">
+        <span class="ring"></span>
+        <span class="glow glow-top-right"></span>
+        <span class="glow glow-bottom-left"></span>
+    </div>
+
+    <header class="site-header">
+        <nav class="nav-shell" aria-label="Primary">
+            <a href="#hero" class="brand">
+                <span class="brand-dot"></span>
+                Nour
+            </a>
+
+            <ul class="nav-list" id="nav-list">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" type="button" aria-pressed="true" aria-label="Switch to dark mode">Dark</button>
+                <button class="menu-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <div class="hero-layout">
+                    <div class="hero-text">
+                        <h1>Hi, I'm <span>Alaa</span></h1>
+                        <p class="hero-role">
+                            <span class="role-typed" id="hero-role-typed">AI Engineer</span>
+                            <span class="role-cursor" aria-hidden="true"></span>
+                        </p>
+                        <p class="hero-copy">
+                            Dynamic AI and Data Science Engineer with 3 years of hands-on experience
+                            in computer vision, deep learning, and advanced analytics. I build intelligent
+                            systems that turn complex data into actionable outcomes for healthcare,
+                            surveillance, and automation use cases.
+                        </p>
+                        <div class="hero-cta-group">
+                            <div class="hero-socials" aria-label="Social links">
+                                <a
+                                    href="https://github.com/Alaa-Saboukh02"
+                                    class="hero-social-link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="GitHub Profile"
+                                >
+                                    <i class="devicon-github-original" aria-hidden="true"></i>
+                                </a>
+                                <a
+                                    href="https://www.linkedin.com/in/allaa-saboukh?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+                                    class="hero-social-link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="LinkedIn Profile"
+                                >
+                                    <i class="devicon-linkedin-plain" aria-hidden="true"></i>
+                                </a>
+                                <a
+                                    href="https://wa.me/201019741580"
+                                    class="hero-social-link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="WhatsApp"
+                                >
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                            <div class="hero-actions">
+                                <a href="cv.html" class="hero-btn">View Resume</a>
+                                <a href="#projects" class="hero-btn hero-btn-secondary">View Projects</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <figure class="hero-visual">
+                        <div class="hero-avatar-shell">
+                            <span class="hero-avatar-halo" aria-hidden="true"></span>
+                            <span class="hero-avatar-orbit hero-avatar-orbit-one" aria-hidden="true"></span>
+                            <span class="hero-avatar-orbit hero-avatar-orbit-two" aria-hidden="true"></span>
+                            <div class="hero-avatar-core">
+                                <img
+                                    src="images/avatar-placeholder.svg"
+                                    alt="Allaa Saboukh portrait"
+                                    class="hero-avatar-img"
+                                    loading="eager"
+                                    decoding="async"
+                                    fetchpriority="high"
+                                    data-fallback-src="images/avatar-placeholder.svg"
+                                >
+                            </div>
+                        </div>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-section" aria-label="Key statistics">
+            <div class="section-shell stats-shell">
+                <div class="stats-grid">
+                    <article class="stat-card reveal">
+                        <span class="stat-icon" aria-hidden="true">&#128640;</span>
+                        <div><span class="stat-number" data-target="3" data-suffix="">0</span><span class="stat-suffix">+</span></div>
+                        <span class="stat-label">Years of Experience</span>
+                    </article>
+                    <article class="stat-card reveal">
+                        <span class="stat-icon" aria-hidden="true">&#129504;</span>
+                        <div><span class="stat-number" data-target="20" data-suffix="">0</span><span class="stat-suffix">+</span></div>
+                        <span class="stat-label">AI Models Built</span>
+                    </article>
+                    <article class="stat-card reveal">
+                        <span class="stat-icon" aria-hidden="true">&#9889;</span>
+                        <div><span class="stat-number" data-target="34" data-suffix="">0</span><span class="stat-suffix">+</span></div>
+                        <span class="stat-label">Tools &amp; Technologies</span>
+                    </article>
+                    <article class="stat-card reveal">
+                        <span class="stat-icon" aria-hidden="true">&#127919;</span>
+                        <div><span class="stat-number" data-target="95" data-suffix="">0</span><span class="stat-suffix">%</span></div>
+                        <span class="stat-label">Client Satisfaction</span>
+                    </article>
+                </div>
+            </div>
+        </section>
+        <div class="section-divider" style="padding: 0 clamp(18px, 6vw, 60px);"></div>
+
+        <section class="about" id="about" aria-labelledby="about-title">
+            <div class="section-shell about-shell">
+                <p class="section-kicker">About</p>
+                <div class="about-panel">
+                    <div class="about-topline">
+                        <span class="about-status">Open For Impactful AI Work</span>
+                        <span class="about-location">Egypt · Saudi Arabia · Remote</span>
+                    </div>
+
+                    <h2 id="about-title">
+                        I transform visual and medical data into high-stakes AI solutions.
+                    </h2>
+
+                    <p class="about-copy">
+                        I am Alaa Saboukh, a Bio AI Engineer and Data Specialist with 3+ years of experience delivering intelligent systems across the MENA region. My expertise, fortified by specialized training at the National Telecommunication Institute (NTI) through the DEYP initiative, spans Computer Vision, Medical AI, and Robotics. I build production-ready pipelines—from healthcare analytics to real-time industrial automation—bridging the gap between deep learning research and reliable deployments.
+                    </p>
+
+                    <div class="about-track" aria-label="Key highlights">
+                        <article class="about-node">
+                            <strong>3+</strong>
+                            <span>Years Experience</span>
+                        </article>
+                        <article class="about-node">
+                            <strong>20+</strong>
+                            <span>Production AI Builds</span>
+                        </article>
+                        <article class="about-node">
+                            <strong>Bio AI + Edge</strong>
+                            <span>Core Specialization</span>
+                        </article>
+                    </div>
+
+                    <p class="about-signature">
+                        Stack Signature: PyTorch, TensorFlow, YOLO, OpenVINO, FastAPI, Arduino, Docker.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="skills" id="skills" aria-labelledby="skills-title">
+            <div class="section-shell skills-shell">
+                <p class="section-kicker">Skills</p>
+
+                <div class="skills-headline">
+                    <div class="skills-title-wrap">
+                        <h2 id="skills-title">Technical Skill Architecture</h2>
+                        <p class="skills-copy">
+                            A structured view of my production stack across AI engineering, computer vision,
+                            deployment, and cloud-ready delivery.
+                        </p>
+                    </div>
+                    <dl class="skills-metrics" aria-label="Skills summary">
+                        <div class="skills-metric">
+                            <dt>Domains</dt>
+                            <dd>8</dd>
+                        </div>
+                        <div class="skills-metric">
+                            <dt>Tools & Tech</dt>
+                            <dd>34+</dd>
+                        </div>
+                        <div class="skills-metric">
+                            <dt>Core Track</dt>
+                            <dd>AI + CV</dd>
+                        </div>
+                        <div class="skills-metric">
+                            <dt>Cloud Scope</dt>
+                            <dd>AWS / GCP</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <div class="skills-board" aria-label="CV Skills Categories">
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Programming Languages</h3>
+                            <span class="skill-group-label">Core</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><i class="skill-icon devicon-python-plain colored" aria-hidden="true"></i><span>Python</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-cplusplus-plain colored" aria-hidden="true"></i><span>C/C++</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-javascript-plain colored" aria-hidden="true"></i><span>JavaScript</span></li>
+                        </ul>
+                    </article>
+
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Deep Learning Frameworks</h3>
+                            <span class="skill-group-label">Advanced</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><i class="skill-icon devicon-pytorch-original colored" aria-hidden="true"></i><span>PyTorch</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-tensorflow-original colored" aria-hidden="true"></i><span>TensorFlow</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-keras-original colored" aria-hidden="true"></i><span>Keras</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">FA</span><span>FastAI</span></li>
+                        </ul>
+                    </article>
+
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Computer Vision</h3>
+                            <span class="skill-group-label">Advanced</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><i class="skill-icon devicon-opencv-plain colored" aria-hidden="true"></i><span>OpenCV</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">YO</span><span>YOLOv5/v8</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">MP</span><span>MediaPipe</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">D2</span><span>Detectron2</span></li>
+                        </ul>
+                    </article>
+
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Data Science & ML</h3>
+                            <span class="skill-group-label">Strong</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><i class="skill-icon devicon-scikitlearn-plain colored" aria-hidden="true"></i><span>Scikit-learn</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">XG</span><span>XGBoost</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-pandas-original colored" aria-hidden="true"></i><span>Pandas</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-numpy-original colored" aria-hidden="true"></i><span>NumPy</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">MP</span><span>Matplotlib</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">SB</span><span>Seaborn</span></li>
+                        </ul>
+                    </article>
+
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Deployment & APIs</h3>
+                            <span class="skill-group-label">Production</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><i class="skill-icon devicon-flask-original colored" aria-hidden="true"></i><span>Flask</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-fastapi-plain colored" aria-hidden="true"></i><span>FastAPI</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-streamlit-plain colored" aria-hidden="true"></i><span>Streamlit</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-docker-plain colored" aria-hidden="true"></i><span>Docker</span></li>
+                        </ul>
+                    </article>
+
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Databases</h3>
+                            <span class="skill-group-label">Data Layer</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">SQL</span><span>SQL</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-mongodb-plain colored" aria-hidden="true"></i><span>MongoDB</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-microsoftsqlserver-plain colored" aria-hidden="true"></i><span>Microsoft SQL Server</span></li>
+                        </ul>
+                    </article>
+
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Tools & Platforms</h3>
+                            <span class="skill-group-label">Workflow</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><i class="skill-icon devicon-googlecolab-plain colored" aria-hidden="true"></i><span>Google Colab</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-jupyter-plain colored" aria-hidden="true"></i><span>Jupyter</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-git-plain colored" aria-hidden="true"></i><span>Git</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-linux-plain colored" aria-hidden="true"></i><span>Linux</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-amazonwebservices-plain-wordmark colored" aria-hidden="true"></i><span>AWS</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-googlecloud-plain colored" aria-hidden="true"></i><span>Google Cloud</span></li>
+                        </ul>
+                    </article>
+
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Others</h3>
+                            <span class="skill-group-label">Optimization</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">MO</span><span>Model Optimization</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">ED</span><span>Edge Deployment</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">DP</span><span>Data Preprocessing</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">FE</span><span>Feature Engineering</span></li>
+                        </ul>
+                    </article>
+                </div>
+
+                <p class="skills-note">
+                    <strong>Focus:</strong> building efficient end-to-end AI pipelines with strong model quality,
+                    deployment readiness, and real-world reliability.
+                </p>
+            </div>
+        </section>
+        <section class="projects" id="projects" aria-labelledby="projects-title">
+            <div class="section-shell projects-shell">
+                <p class="section-kicker">Projects</p>
+                <div class="projects-headline">
+                    <h2 id="projects-title">Featured Projects</h2>
+                    <span class="projects-underline" aria-hidden="true"></span>
+                </div>
+                <p class="projects-copy">
+                    Production-focused projects spanning computer vision, intelligent automation, and analytics delivery.
+                </p>
+
+                <div class="projects-filters" role="group" aria-label="Project categories">
+                    <button type="button" class="project-filter is-active" aria-pressed="true" data-filter="all">All</button>
+                    <button type="button" class="project-filter" aria-pressed="false" data-filter="ai">AI</button>
+                    <button type="button" class="project-filter" aria-pressed="false" data-filter="web">Web</button>
+                    <button type="button" class="project-filter" aria-pressed="false" data-filter="automation">Automation</button>
+                </div>
+
+                <div class="projects-grid" aria-label="Featured projects list">
+                    <!-- Project 1: Sugary AI: Diabetes Analysis -->
+                    <article class="project-card" data-category="ai">
+                        <div class="project-image-wrapper">
+                            <img
+                                src="images/sugary_project.png"
+                                alt="Sugary AI: Diabetes Analysis"
+                                class="project-image"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                            <div class="project-overlay">
+                                <div class="overlay-actions">
+                                    <a 
+                                        href="https://github.com/Alaa-Saboukh02/Sugary_project" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        class="overlay-action-btn github-btn" 
+                                        aria-label="View on GitHub"
+                                    >
+                                        <i class="devicon-github-original" aria-hidden="true"></i>
+                                    </a>
+                                    <button 
+                                        type="button" 
+                                        class="overlay-action-btn share-btn" 
+                                        aria-label="Share project"
+                                        data-share-title="Sugary AI: Diabetes Analysis"
+                                        data-share-url="https://github.com/Alaa-Saboukh02/Sugary_project"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <circle cx="18" cy="5" r="3"></circle>
+                                            <circle cx="6" cy="12" r="3"></circle>
+                                            <circle cx="18" cy="19" r="3"></circle>
+                                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">Sugary AI: Diabetes Analysis</h3>
+                            <div class="project-meta">
+                                <span>HealthTech</span>
+                                <span>Analytics</span>
+                                <span>Prediction</span>
+                            </div>
+                            <p class="project-description">
+                                An end-to-end AI system for analyzing glucose levels and providing personalized health insights. Built to improve diabetic patient care.
+                            </p>
+                            <ul class="project-highlights">
+                                <li>Developed accurate prediction models using clinical datasets.</li>
+                                <li>Integrated intuitive visualization for health trends and monitoring.</li>
+                            </ul>
+                            <ul class="project-tech-tags">
+                                <li>Python</li>
+                                <li>TensorFlow</li>
+                                <li>Scikit-Learn</li>
+                            </ul>
+                            <button type="button" class="project-detail-btn"
+                                data-project="0" aria-label="View details for Sugary AI">View Details &rarr;</button>
+                        </div>
+                    </article>
+
+                    <!-- Project 2: AutoVision: Car Wash Detection -->
+                    <article class="project-card" data-category="ai automation">
+                        <div class="project-image-wrapper">
+                            <img
+                                src="images/car_wash.png"
+                                alt="AutoVision: Car Wash Detection"
+                                class="project-image"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                            <div class="project-overlay">
+                                <div class="overlay-actions">
+                                    <a 
+                                        href="https://github.com/Alaa-Saboukh02/car_waching-models" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        class="overlay-action-btn github-btn" 
+                                        aria-label="View on GitHub"
+                                    >
+                                        <i class="devicon-github-original" aria-hidden="true"></i>
+                                    </a>
+                                    <button 
+                                        type="button" 
+                                        class="overlay-action-btn share-btn" 
+                                        aria-label="Share project"
+                                        data-share-title="AutoVision: Car Wash Detection"
+                                        data-share-url="https://github.com/Alaa-Saboukh02/car_waching-models"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <circle cx="18" cy="5" r="3"></circle>
+                                            <circle cx="6" cy="12" r="3"></circle>
+                                            <circle cx="18" cy="19" r="3"></circle>
+                                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">AutoVision: Car Wash Detection</h3>
+                            <div class="project-meta">
+                                <span>Computer Vision</span>
+                                <span>Object Detection</span>
+                                <span>Tracking</span>
+                            </div>
+                            <p class="project-description">
+                                Real-time computer vision model for identifying cars entering/ exiting car wash stations and tracking their status.
+                            </p>
+                            <ul class="project-highlights">
+                                <li>Implemented YOLO-based detection with 95% accuracy.</li>
+                                <li>Optimized for real-time inference on edge devices for surveillance.</li>
+                            </ul>
+                            <ul class="project-tech-tags">
+                                <li>YOLOv8</li>
+                                <li>OpenCV</li>
+                                <li>PyTorch</li>
+                            </ul>
+                            <button type="button" class="project-detail-btn"
+                                data-project="1" aria-label="View details for AutoVision">View Details &rarr;</button>
+                        </div>
+                    </article>
+
+                    <!-- Project 3: BikeStore Data Intelligence -->
+                    <article class="project-card" data-category="web automation">
+                        <div class="project-image-wrapper">
+                            <img
+                                src="images/bike_store.png"
+                                alt="BikeStore Data Intelligence"
+                                class="project-image"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                            <div class="project-overlay">
+                                <div class="overlay-actions">
+                                    <a 
+                                        href="https://github.com/Alaa-Saboukh02/Bike_store.python" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        class="overlay-action-btn github-btn" 
+                                        aria-label="View on GitHub"
+                                    >
+                                        <i class="devicon-github-original" aria-hidden="true"></i>
+                                    </a>
+                                    <button 
+                                        type="button" 
+                                        class="overlay-action-btn share-btn" 
+                                        aria-label="Share project"
+                                        data-share-title="BikeStore Data Intelligence"
+                                        data-share-url="https://github.com/Alaa-Saboukh02/Bike_store.python"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <circle cx="18" cy="5" r="3"></circle>
+                                            <circle cx="6" cy="12" r="3"></circle>
+                                            <circle cx="18" cy="19" r="3"></circle>
+                                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">BikeStore Data Intelligence</h3>
+                            <div class="project-meta">
+                                <span>Data Analysis</span>
+                                <span>SQL</span>
+                                <span>Market Trends</span>
+                            </div>
+                            <p class="project-description">
+                                Analysis pipeline for bike retail, uncovering sales patterns and customer behavior through SQL and Python.
+                            </p>
+                            <ul class="project-highlights">
+                                <li>Transformed raw SQL data into actionable business intelligence.</li>
+                                <li>Created high-impact visualizations for store performance tracking.</li>
+                            </ul>
+                            <ul class="project-tech-tags">
+                                <li>SQL</li>
+                                <li>Pandas</li>
+                                <li>Matplotlib</li>
+                            </ul>
+                            <button type="button" class="project-detail-btn"
+                                data-project="2" aria-label="View details for BikeStore">View Details &rarr;</button>
+                        </div>
+                    </article>
+
+                    <!-- Project 4: InvoiceSense AI: NLP Classifier -->
+                    <article class="project-card" data-category="ai">
+                        <div class="project-image-wrapper">
+                            <img
+                                src="images/invoice_classifier.png"
+                                alt="InvoiceSense AI: NLP Classifier"
+                                class="project-image"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                            <div class="project-overlay">
+                                <div class="overlay-actions">
+                                    <a 
+                                        href="https://github.com/Alaa-Saboukh02/AutoModelForSequenceClassification" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        class="overlay-action-btn github-btn" 
+                                        aria-label="View on GitHub"
+                                    >
+                                        <i class="devicon-github-original" aria-hidden="true"></i>
+                                    </a>
+                                    <button 
+                                        type="button" 
+                                        class="overlay-action-btn share-btn" 
+                                        aria-label="Share project"
+                                        data-share-title="InvoiceSense AI: NLP Classifier"
+                                        data-share-url="https://github.com/Alaa-Saboukh02/AutoModelForSequenceClassification"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <circle cx="18" cy="5" r="3"></circle>
+                                            <circle cx="6" cy="12" r="3"></circle>
+                                            <circle cx="18" cy="19" r="3"></circle>
+                                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-title">InvoiceSense AI: NLP Classifier</h3>
+                            <div class="project-meta">
+                                <span>NLP</span>
+                                <span>Transformers</span>
+                                <span>FinTech</span>
+                            </div>
+                            <p class="project-description">
+                                Deep learning tool designed to automatically categorize restaurant and store invoices using advanced NLP.
+                            </p>
+                            <ul class="project-highlights">
+                                <li>Leveraged Transformer models for high-precision text classification.</li>
+                                <li>Automated document sorting workflows for efficient finance management.</li>
+                            </ul>
+                            <ul class="project-tech-tags">
+                                <li>HuggingFace</li>
+                                <li>Python</li>
+                                <li>Deep Learning</li>
+                            </ul>
+                            <button type="button" class="project-detail-btn"
+                                data-project="3" aria-label="View details for InvoiceSense">View Details &rarr;</button>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+        <section class="experience" id="experience" aria-labelledby="experience-title">
+            <div class="section-shell experience-shell">
+                <p class="section-kicker">Experience</p>
+                <div class="experience-header">
+                    <div class="experience-title-wrap">
+                        <h2 id="experience-title">Professional Experience</h2>
+                        <p class="experience-copy">
+                            3+ years delivering AI systems from data to deployment across computer vision,
+                            automation, and analytics.
+                        </p>
+                    </div>
+                    <div class="experience-metrics" aria-label="Experience highlights">
+                        <article class="experience-metric">
+                            <span>Delivery</span>
+                            <strong>20+ Builds</strong>
+                            <p>Production-ready AI pipelines shipped.</p>
+                        </article>
+                        <article class="experience-metric">
+                            <span>Focus</span>
+                            <strong>CV + AI</strong>
+                            <p>Detection, classification, tracking, OCR.</p>
+                        </article>
+                        <article class="experience-metric">
+                            <span>Deployment</span>
+                            <strong>Edge + Cloud</strong>
+                            <p>FastAPI, Docker, and optimized inference.</p>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="experience-grid">
+                    <article class="experience-card">
+                        <div class="experience-role">
+                            <div>
+                                <h3>Bio AI & Machine Learning Engineer</h3>
+                                <p class="experience-org">Healthcare · BioTech Solutions</p>
+                            </div>
+                            <span class="experience-period">Core Specialty</span>
+                        </div>
+                        <p class="experience-summary">
+                            Lead developer of intelligent systems for medical analysis, including the specialized "Sugary App" for diabetes data intelligence.
+                        </p>
+                        <ul class="experience-points">
+                            <li>Architected deep learning pipelines for high-precision medical imaging and biostatistics.</li>
+                            <li>Engineered predictive models for healthcare monitoring with a focus on real-world reliability.</li>
+                            <li>Collaborated on regional AI initiatives across Egypt and Saudi Arabia.</li>
+                        </ul>
+                        <div class="experience-tags">
+                            <span>Deep Learning</span>
+                            <span>BioTech</span>
+                            <span>Medical AI</span>
+                        </div>
+                    </article>
+
+                    <article class="experience-card">
+                        <div class="experience-role">
+                            <div>
+                                <h3>Data Intelligence Specialist</h3>
+                                <p class="experience-org">NTI · Digital Egypt Pioneers</p>
+                            </div>
+                            <span class="experience-period">Professional Track</span>
+                        </div>
+                        <p class="experience-summary">
+                            Certified Specialist through the National Telecommunication Institute, focusing on advanced analytics and data-driven strategy.
+                        </p>
+                        <ul class="experience-points">
+                            <li>Built automated data mining and visualization layers for complex industrial datasets.</li>
+                            <li>Delivered KPI dashboards that translate model signals into strategic business outcomes.</li>
+                            <li>Optimized data pipelines for large-scale analytics and intelligence reporting.</li>
+                        </ul>
+                        <div class="experience-tags">
+                            <span>Data Analysis</span>
+                            <span>NTI Certified</span>
+                            <span>Business Intelligence</span>
+                        </div>
+                    </article>
+
+                    <article class="experience-card">
+                        <div class="experience-role">
+                            <div>
+                                <h3>Robotics & IoT Developer</h3>
+                                <p class="experience-org">Edge AI · Hardware Integration</p>
+                            </div>
+                            <span class="experience-period">Innovation Track</span>
+                        </div>
+                        <p class="experience-summary">
+                            Integrating AI models with embedded systems to build physical automation and smart robotic platforms.
+                        </p>
+                        <ul class="experience-points">
+                            <li>Designed Arduino-based control systems integrated with real-time vision algorithms.</li>
+                            <li>Developed Edge AI deployments for surveillance and automated industrial workflows.</li>
+                            <li>Spearheaded R&D projects bridging the gap between ML software and physical hardware.</li>
+                        </ul>
+                        <div class="experience-tags">
+                            <span>Robotics</span>
+                            <span>Arduino</span>
+                            <span>Edge Computing</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+        <section class="contact" id="contact" aria-labelledby="contact-title">
+            <div class="section-shell contact-shell">
+                <p class="section-kicker">Contact</p>
+                <div class="contact-header">
+                    <div class="contact-title-wrap">
+                        <h2 id="contact-title">Let's build something impactful</h2>
+                        <p class="contact-copy">
+                            Open to remote roles, freelance projects, and AI consulting. Share your brief and I will
+                            respond with a clear plan and next steps.
+                        </p>
+                    </div>
+                    <div class="contact-actions">
+                        <a href="cv.pdf" class="contact-btn contact-btn-ghost">Download CV</a>
+                        <a href="mailto:allaa54sabboukh@gmail.com" class="contact-btn contact-btn-primary">Email Me</a>
+                        <a href="https://wa.me/201019741580" class="contact-btn contact-btn-ghost">WhatsApp Me</a>
+                    </div>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-panel">
+                        <div class="contact-panel-head">
+                            <h3>Reach Me Directly</h3>
+                            <p>Fastest response via WhatsApp or Email. LinkedIn is best for quick introductions.</p>
+                        </div>
+
+                        <div class="contact-list">
+                            <a class="contact-item" href="mailto:allaa54sabboukh@gmail.com">
+                                <span class="contact-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                </span>
+                                <span>
+                                    <span class="contact-label">Email</span>
+                                    <span class="contact-value">allaa54sabboukh@gmail.com</span>
+                                </span>
+                            </a>
+
+                            <a class="contact-item" href="https://wa.me/201019741580" target="_blank" rel="noopener noreferrer">
+                                <span class="contact-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                   </svg>
+                               </span>
+                               <span>
+                                   <span class="contact-label">WhatsApp</span>
+                                   <span class="contact-value">01019741580</span>
+                               </span>
+                           </a>
+
+                            <div class="contact-item">
+                                <span class="contact-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10z"></path>
+                                        <circle cx="12" cy="11" r="2.5"></circle>
+                                    </svg>
+                                </span>
+                                <span>
+                                    <span class="contact-label">Location</span>
+                                    <span class="contact-value">Egypt · Remote</span>
+                                </span>
+                            </div>
+
+                            <a class="contact-item" href="https://www.linkedin.com/in/allaa-saboukh?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer">
+                                <span class="contact-icon" aria-hidden="true">
+                                    <i class="devicon-linkedin-plain" aria-hidden="true"></i>
+                                </span>
+                                <span>
+                                    <span class="contact-label">LinkedIn</span>
+                                    <span class="contact-value">Connect for collaboration</span>
+                                </span>
+                            </a>
+
+                            <a class="contact-item" href="https://github.com/Alaa-Saboukh02" target="_blank" rel="noopener noreferrer">
+                                <span class="contact-icon" aria-hidden="true">
+                                    <i class="devicon-github-original" aria-hidden="true"></i>
+                                </span>
+                                <span>
+                                    <span class="contact-label">GitHub</span>
+                                    <span class="contact-value">View repositories</span>
+                                </span>
+                            </a>
+                        </div>
+
+                        <div class="contact-availability">
+                            <p class="contact-availability-title">Availability</p>
+                            <p class="contact-availability-copy">
+                                Open for AI engineering projects, CV systems, and automation builds. Response time
+                                within 24-48 hours.
+                            </p>
+                        </div>
+                    </div>
+
+                    <form id="contact-form" class="contact-form">
+                        <div class="contact-form-head">
+                            <h3>Project Brief</h3>
+                            <p>Share scope, timeline, and the outcome you want to achieve.</p>
+                        </div>
+
+                        <div class="contact-form-grid">
+                            <label class="contact-field">
+                                <span>Full Name</span>
+                                <input type="text" name="name" placeholder="Your name" required autocomplete="name">
+                            </label>
+                            <label class="contact-field">
+                                <span>Email</span>
+                                <input type="email" name="email" placeholder="you@email.com" required autocomplete="email">
+                            </label>
+                        </div>
+
+                        <label class="contact-field">
+                            <span>Project Type</span>
+                            <select name="project_type">
+                                <option value="AI System">AI System / Computer Vision</option>
+                                <option value="Automation">Automation & Workflow</option>
+                                <option value="Analytics">Analytics Dashboard</option>
+                                <option value="Consulting">Consulting / Strategy</option>
+                            </select>
+                        </label>
+
+                        <label class="contact-field">
+                            <span>Message</span>
+                            <textarea name="message" rows="4" placeholder="Tell me about your project goals."></textarea>
+                        </label>
+
+                        <input
+                            type="text"
+                            name="website"
+                            tabindex="-1"
+                            autocomplete="off"
+                            aria-hidden="true"
+                            style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"
+                        >
+
+                        <div class="contact-form-footer">
+                            <p class="contact-note" id="contact-status-note">Your message will be sent securely to my inbox.</p>
+                            <button type="submit" class="contact-btn contact-btn-primary">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer
+        style="position:relative;z-index:2;padding:48px clamp(18px,6vw,60px) 32px;border-top:1px solid rgba(108,148,255,0.16);">
+        <div
+            style="max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;">
+            <div>
+                <p style="font-size:1.05rem;font-weight:700;color:var(--text-main);margin-bottom:4px;">Alaa Saboukh</p>
+                <p style="font-size:0.82rem;color:var(--text-soft);">AI Engineer &middot; Computer Vision &middot; Deep Learning</p>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;">
+                <a href="https://github.com/Alaa-Saboukh02" target="_blank" rel="noopener noreferrer"
+                    aria-label="GitHub"
+                    style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(148,183,255,0.3);background:rgba(30,50,120,0.3);display:inline-flex;align-items:center;justify-content:center;color:var(--text-soft);text-decoration:none;transition:border-color 0.2s ease,color 0.2s ease;">
+                    <i class="devicon-github-original" style="font-size:1.1rem;"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/allaa-saboukh?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+                    target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+                    style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(148,183,255,0.3);background:rgba(30,50,120,0.3);display:inline-flex;align-items:center;justify-content:center;color:var(--text-soft);text-decoration:none;transition:border-color 0.2s ease,color 0.2s ease;">
+                    <i class="devicon-linkedin-plain" style="font-size:1.1rem;"></i>
+                </a>
+                <a href="https://wa.me/201019741580" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+                    style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(148,183,255,0.3);background:rgba(30,50,120,0.3);display:inline-flex;align-items:center;justify-content:center;color:var(--text-soft);text-decoration:none;transition:border-color 0.2s ease,color 0.2s ease;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                </a>
+            </div>
+            <p
+                style="font-size:0.8rem;color:var(--text-soft);width:100%;text-align:center;border-top:1px solid rgba(108,148,255,0.1);padding-top:20px;margin-top:8px;">
+                &copy; 2026 Alaa Saboukh. Built with passion for AI &amp; great design.
+            </p>
+        </div>
+    </footer>
+
+    <button class="admin-launch" id="admin-launch" type="button" aria-haspopup="dialog" style="display: none;">
+        Admin Studio
+    </button>
+
+    <div class="admin-auth-overlay" id="admin-login-section" aria-labelledby="admin-login-title" aria-hidden="true" hidden style="display: none; position: fixed; inset: 0; background: rgba(2, 8, 38, 0.2); z-index: 10000; align-items: center; justify-content: center; padding: 20px;">
+        <form class="admin-login-form" id="admin-login-form" novalidate style="background: rgba(30,35,48,0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 48px 40px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.08); width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 24px; box-shadow: none !important;">
+            <div style="text-align: center; margin-bottom: 8px;">
+                <h2 id="admin-login-title" style="margin: 0 0 8px 0; color: #fff; font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em;">Content Studio</h2>
+                <p style="margin: 0; color: rgba(255,255,255,0.6); font-size: 0.95rem;">Sign in to access the dashboard and manage your portfolio content and messages.</p>
+            </div>
+            
+            <div id="login-error" role="alert" aria-live="polite" hidden style="display: none; color: #ff5252; background: rgba(255,82,82,0.1); padding: 12px; border-radius: 8px; font-size: 0.875rem; text-align: center; border: 1px solid rgba(255,82,82,0.2);"></div>
+            
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <label class="admin-field" style="display: block;">
+                    <span style="color: rgba(255,255,255,0.8); font-size: 0.875rem; font-weight: 500; margin-bottom: 8px; display: block;">Email Address</span>
+                    <input type="email" id="login-email" autocomplete="username" required placeholder="name@example.com" style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 14px 16px; border-radius: 12px; font-size: 1rem; transition: border-color 0.2s, background 0.2s; outline: none;" onfocus="this.style.borderColor='rgba(255,255,255,0.3)'; this.style.background='rgba(0,0,0,0.3)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.background='rgba(0,0,0,0.2)'">
+                </label>
+                
+                <label class="admin-field" style="display: block;">
+                    <span style="color: rgba(255,255,255,0.8); font-size: 0.875rem; font-weight: 500; margin-bottom: 8px; display: block;">Password</span>
+                    <input type="password" id="login-pass" autocomplete="current-password" required placeholder="Password" style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 14px 16px; border-radius: 12px; font-size: 1rem; transition: border-color 0.2s, background 0.2s; outline: none;" onfocus="this.style.borderColor='rgba(255,255,255,0.3)'; this.style.background='rgba(0,0,0,0.3)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.background='rgba(0,0,0,0.2)'">
+                </label>
+            </div>
+            
+            <button type="submit" id="login-btn" class="admin-btn admin-btn-primary" style="width: 100%; padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 500; margin-top: 8px; background: #fff; color: #0a1020; border: none; cursor: pointer; transition: transform 0.2s, opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">Login</button>
+            
+            <a href="index.html" style="color: rgba(255,255,255,0.5); text-align: center; font-size: 0.875rem; text-decoration: none; margin-top: 8px; transition: color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.8)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">&larr; Back to Portfolio</a>
+        </form>
+    </div>
+
+    <div class="admin-dashboard" id="admin-dashboard" aria-hidden="true">
+        <div class="admin-backdrop" data-admin-close></div>
+        <div class="admin-shell" id="admin-shell" role="dialog" aria-modal="true" aria-label="Portfolio admin dashboard">
+            <aside class="admin-sidebar">
+                <div class="admin-brand">
+                    <span class="admin-brand-dot" aria-hidden="true"></span>
+                    Content Studio
+                </div>
+                <p class="admin-sidebar-copy">Edit portfolio content safely without touching the layout.</p>
+                <nav class="admin-nav" aria-label="Dashboard sections">
+                    <button class="admin-nav-link is-active" type="button" data-section="hero">Hero Section</button>
+                    <button class="admin-nav-link" type="button" data-section="about">About Section</button>
+                    <button class="admin-nav-link" type="button" data-section="skills">Skills</button>
+                    <button class="admin-nav-link" type="button" data-section="projects">Projects</button>
+                    <button class="admin-nav-link" type="button" data-section="services">Services</button>
+                    <button class="admin-nav-link" type="button" data-section="contact">Contact Info</button>
+                    <button class="admin-nav-link" type="button" data-section="social">Social Links</button>
+                    <button class="admin-nav-link" type="button" data-section="messages">Messages</button>
+                </nav>
+                <div class="admin-sidebar-footer">
+                    <button class="admin-btn admin-btn-ghost" id="admin-theme-toggle" type="button">Dark Mode</button>
+                    <button class="admin-btn admin-btn-ghost" id="admin-show-login" type="button">Sign In</button>
+                    <button class="admin-btn admin-btn-danger" id="admin-logout" type="button" style="display: none; width: 100%; border-color: #ff5252; color: #ff5252;">Logout</button>
+                    <button class="admin-btn admin-btn-primary" id="admin-close" type="button">Exit</button>
+                </div>
+            </aside>
+
+            <section class="admin-main">
+                <header class="admin-header">
+                    <div>
+                        <p class="admin-kicker">Portfolio Controls</p>
+                        <h2 class="admin-title" id="admin-section-title">Hero Section</h2>
+                        <p class="admin-subtitle" id="admin-section-desc">
+                            Update headline, role loop, avatar, and CTA copy.
+                        </p>
+                    </div>
+                    <div class="admin-header-actions">
+                        <span class="admin-save-state" id="admin-save-status">Saved</span>
+                        <button class="admin-btn admin-btn-ghost" id="admin-reset" type="button">Reset</button>
+                        <button class="admin-btn admin-btn-primary" id="admin-save" type="button">Save</button>
+                    </div>
+                </header>
+
+                <div class="admin-content">
+                    <div class="admin-section is-active" data-section="hero">
+                        <div class="admin-card">
+                            <h3>Hero Overview</h3>
+                            <label class="admin-field">
+                                <span>Name</span>
+                                <input id="admin-hero-name" type="text" placeholder="Your name">
+                            </label>
+                            <label class="admin-field">
+                                <span>Roles (use | to separate)</span>
+                                <input id="admin-hero-roles" type="text" placeholder="Web Developer | Full Stack Engineer | UI/UX Core">
+                            </label>
+                            <label class="admin-field">
+                                <span>Summary</span>
+                                <textarea id="admin-hero-copy" rows="4" placeholder="Short homepage intro"></textarea>
+                            </label>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3>Hero Media</h3>
+                            <label class="admin-field">
+                                <span>Avatar Image URL</span>
+                                <input id="admin-hero-avatar" type="url" placeholder="https://...">
+                            </label>
+                            <label class="admin-field">
+                                <span>Avatar Alt Text</span>
+                                <input id="admin-hero-avatar-alt" type="text" placeholder="Portrait description">
+                            </label>
+                            <div class="admin-upload" data-upload="hero-avatar">
+                                <input id="admin-hero-avatar-file" type="file" accept="image/*">
+                                <div class="admin-upload-body">
+                                    <strong>Drop image here</strong>
+                                    <span>or click to upload</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3>Hero Actions</h3>
+                            <label class="admin-field">
+                                <span>Primary Button Text</span>
+                                <input id="admin-hero-primary-text" type="text" placeholder="Hire Me">
+                            </label>
+                            <label class="admin-field">
+                                <span>Primary Button Link</span>
+                                <input id="admin-hero-primary-url" type="url" placeholder="mailto:noureg122@gmail.com">
+                            </label>
+                            <label class="admin-field">
+                                <span>Secondary Button Text</span>
+                                <input id="admin-hero-secondary-text" type="text" placeholder="View Projects">
+                            </label>
+                            <label class="admin-field">
+                                <span>Secondary Button Link</span>
+                                <input id="admin-hero-secondary-url" type="url" placeholder="#projects">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="admin-section" data-section="about">
+                        <div class="admin-card">
+                            <h3>About Overview</h3>
+                            <label class="admin-field">
+                                <span>Status Tagline</span>
+                                <input id="admin-about-status" type="text" placeholder="Available for Web Projects">
+                            </label>
+                            <label class="admin-field">
+                                <span>Location</span>
+                                <input id="admin-about-location" type="text" placeholder="Egypt / Remote">
+                            </label>
+                            <label class="admin-field">
+                                <span>Headline</span>
+                                <input id="admin-about-title" type="text" placeholder="About headline">
+                            </label>
+                            <label class="admin-field">
+                                <span>Description</span>
+                                <textarea id="admin-about-copy" rows="4" placeholder="About section summary"></textarea>
+                            </label>
+                            <label class="admin-field">
+                                <span>Signature Line</span>
+                                <input id="admin-about-signature" type="text" placeholder="Stack Signature: ...">
+                            </label>
+                        </div>
+
+                        <div class="admin-card">
+                            <div class="admin-card-head">
+                                <h3>Highlights</h3>
+                                <button class="admin-btn admin-btn-ghost" type="button" data-action="add-about-metric">
+                                    Add Highlight
+                                </button>
+                            </div>
+                            <div id="admin-about-metrics" class="admin-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section" data-section="skills">
+                        <div class="admin-card">
+                            <h3>Skills Headline</h3>
+                            <label class="admin-field">
+                                <span>Title</span>
+                                <input id="admin-skills-title" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>Description</span>
+                                <textarea id="admin-skills-copy" rows="3"></textarea>
+                            </label>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3>Skill Snapshot</h3>
+                            <label class="admin-field">
+                                <span>Frontend Track</span>
+                                <input id="admin-skills-domains" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>Backend Track</span>
+                                <input id="admin-skills-tools" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>Workflow</span>
+                                <input id="admin-skills-core" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>Delivery Focus</span>
+                                <input id="admin-skills-cloud" type="text">
+                            </label>
+                        </div>
+
+                        <div class="admin-card">
+                            <div class="admin-card-head">
+                                <h3>Skill Groups</h3>
+                                <button class="admin-btn admin-btn-ghost" type="button" data-action="add-skill-group">
+                                    Add Group
+                                </button>
+                            </div>
+                            <div id="admin-skills-groups" class="admin-list"></div>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3>Note</h3>
+                            <label class="admin-field">
+                                <span>Label</span>
+                                <input id="admin-skills-note-label" type="text" placeholder="Focus:">
+                            </label>
+                            <label class="admin-field">
+                                <span>Note Text</span>
+                                <textarea id="admin-skills-note" rows="2"></textarea>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="admin-section" data-section="projects">
+                        <div class="admin-card">
+                            <h3>Projects Intro</h3>
+                            <label class="admin-field">
+                                <span>Section Label</span>
+                                <input id="admin-projects-kicker" type="text" placeholder="Portfolio">
+                            </label>
+                            <label class="admin-field">
+                                <span>Title</span>
+                                <input id="admin-projects-title" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>Description</span>
+                                <textarea id="admin-projects-copy" rows="3"></textarea>
+                            </label>
+                            <label class="admin-field">
+                                <span>Summary Label</span>
+                                <input id="admin-projects-summary-label" type="text" placeholder="Frontend Delivery">
+                            </label>
+                            <label class="admin-field">
+                                <span>Summary Text</span>
+                                <textarea id="admin-projects-summary-copy" rows="3" placeholder="Modern interfaces with subtle motion, strong UX structure, and production-ready code."></textarea>
+                            </label>
+                            <label class="admin-field">
+                                <span>Filter Buttons (use | to separate)</span>
+                                <input id="admin-projects-filters" type="text" placeholder="All | Portfolio | Web | UI | Dashboard">
+                            </label>
+                        </div>
+
+                        <div class="admin-card">
+                            <div class="admin-card-head">
+                                <h3>Live Projects Manager</h3>
+                                <button class="admin-btn admin-btn-ghost" type="button" data-action="add-project">
+                                    Add Project
+                                </button>
+                            </div>
+                            <div id="admin-projects-list" class="admin-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section" data-section="services">
+                        <div class="admin-card">
+                            <h3>Services Intro</h3>
+                            <label class="admin-field">
+                                <span>Title</span>
+                                <input id="admin-services-title" type="text" placeholder="High-Impact Digital Solutions">
+                            </label>
+                            <label class="admin-field">
+                                <span>Description</span>
+                                <textarea id="admin-services-copy" rows="3" placeholder="I provide end-to-end technical expertise to help businesses and individuals build scalable digital products."></textarea>
+                            </label>
+                        </div>
+
+                        <div class="admin-card">
+                            <div class="admin-card-head">
+                                <h3>Service Categories</h3>
+                                <button class="admin-btn admin-btn-ghost" type="button" data-action="add-service-category">
+                                    Add Category
+                                </button>
+                            </div>
+                            <div id="admin-services-categories" class="admin-list"></div>
+                        </div>
+
+                        <div class="admin-card">
+                            <div class="admin-card-head">
+                                <h3>Service Cards</h3>
+                                <button class="admin-btn admin-btn-ghost" type="button" data-action="add-service">
+                                    Add Service
+                                </button>
+                            </div>
+                            <div id="admin-services-list" class="admin-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section" data-section="contact">
+                        <div class="admin-card">
+                            <h3>Contact Header</h3>
+                            <label class="admin-field">
+                                <span>Title</span>
+                                <input id="admin-contact-title" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>Description</span>
+                                <textarea id="admin-contact-copy" rows="3"></textarea>
+                            </label>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3>Contact CTAs</h3>
+                            <label class="admin-field">
+                                <span>Primary Button Text</span>
+                                <input id="admin-contact-primary-text" type="text" placeholder="Email Me">
+                            </label>
+                            <label class="admin-field">
+                                <span>Primary Button Link</span>
+                                <input id="admin-contact-primary-url" type="url" placeholder="mailto:noureg122@gmail.com">
+                            </label>
+                            <label class="admin-field">
+                                <span>Secondary Button Text</span>
+                                <input id="admin-contact-secondary-text" type="text" placeholder="WhatsApp Me">
+                            </label>
+                            <label class="admin-field">
+                                <span>Secondary Button Link</span>
+                                <input id="admin-contact-secondary-url" type="url" placeholder="https://wa.me/201021310147">
+                            </label>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3>Contact Details</h3>
+                            <label class="admin-field">
+                                <span>Email</span>
+                                <input id="admin-contact-email" type="email">
+                            </label>
+                            <label class="admin-field">
+                                <span>WhatsApp URL</span>
+                                <input id="admin-contact-whatsapp" type="url" placeholder="https://wa.me/201021310147">
+                            </label>
+                            <label class="admin-field">
+                                <span>Location</span>
+                                <input id="admin-contact-location" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>LinkedIn Subtitle</span>
+                                <input id="admin-contact-linkedin-label" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>GitHub Subtitle</span>
+                                <input id="admin-contact-github-label" type="text">
+                            </label>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3>Availability</h3>
+                            <label class="admin-field">
+                                <span>Title</span>
+                                <input id="admin-contact-availability-title" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>Copy</span>
+                                <textarea id="admin-contact-availability-copy" rows="3"></textarea>
+                            </label>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3>Contact Panel</h3>
+                            <label class="admin-field">
+                                <span>Panel Title</span>
+                                <input id="admin-contact-panel-title" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>Panel Description</span>
+                                <textarea id="admin-contact-panel-copy" rows="2"></textarea>
+                            </label>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3>Contact Form</h3>
+                            <label class="admin-field">
+                                <span>Form Title</span>
+                                <input id="admin-contact-form-title" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>Form Description</span>
+                                <textarea id="admin-contact-form-copy" rows="2"></textarea>
+                            </label>
+                            <label class="admin-field">
+                                <span>Note Text</span>
+                                <input id="admin-contact-form-note" type="text">
+                            </label>
+                            <label class="admin-field">
+                                <span>Submit Button</span>
+                                <input id="admin-contact-form-submit" type="text">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="admin-section" data-section="social">
+                        <div class="admin-card">
+                            <h3>Social Links</h3>
+                            <label class="admin-field">
+                                <span>GitHub URL</span>
+                                <input id="admin-social-github" type="url">
+                            </label>
+                            <label class="admin-field">
+                                <span>LinkedIn URL</span>
+                                <input id="admin-social-linkedin" type="url">
+                            </label>
+                            <label class="admin-field">
+                                <span>WhatsApp URL</span>
+                                <input id="admin-social-whatsapp" type="url">
+                            </label>
+                            <label class="admin-field">
+                                <span>Portfolio Email</span>
+                                <input id="admin-social-email" type="email">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="admin-section" data-section="messages">
+                        <div class="admin-card">
+                            <div class="admin-card-head">
+                                <h3>Contact Messages</h3>
+                                <button class="admin-btn admin-btn-ghost" type="button" id="admin-messages-refresh">Refresh</button>
+                            </div>
+                            <div id="admin-messages-list" class="admin-list">
+                                <p style="color:var(--text-soft,#888);font-size:0.9rem;padding:16px 0;">Select this section to load messages.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="admin-preview">
+                <div class="admin-preview-head">
+                    <span>Live Preview</span>
+                    <button class="admin-btn admin-btn-ghost" id="admin-preview-refresh" type="button" onclick="const frame=this.closest('.admin-preview').querySelector('iframe'); if(frame){ frame.src='index.html?preview=' + Date.now(); }">Refresh</button>
+                </div>
+                <div class="admin-preview-frame">
+                    <div id="admin-preview" class="admin-preview-sandbox" aria-hidden="true">
+                        <iframe class="admin-preview-iframe" title="Live preview" src="index.html" loading="eager"></iframe>
+                    </div>
+                </div>
+                <div class="admin-preview-foot">
+                    <span class="admin-preview-note">Preview loads the current public site.</span>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script type="module" src="firebase-integration.js"></script>
+    <script>
+        (() => {
+            const sectionMeta = {
+                hero: {
+                    title: "Hero Section",
+                    desc: "Update headline, role loop, avatar, and CTA copy."
+                },
+                about: {
+                    title: "About Section",
+                    desc: "Keep the status line, headline, summary, and highlights aligned with the public site."
+                },
+                skills: {
+                    title: "Skills",
+                    desc: "Review the skill groups, note copy, and high-level stack framing."
+                },
+                projects: {
+                    title: "Projects",
+                    desc: "Manage the intro copy and the live project cards shown on the portfolio."
+                },
+                services: {
+                    title: "Services",
+                    desc: "Adjust the services intro, categories, and service cards without changing the dashboard layout."
+                },
+                contact: {
+                    title: "Contact Info",
+                    desc: "Edit direct contact details, CTA buttons, availability copy, and the project brief form."
+                },
+                social: {
+                    title: "Social Links",
+                    desc: "Keep GitHub, LinkedIn, WhatsApp, and portfolio email links up to date."
+                },
+                messages: {
+                    title: "Messages",
+                    desc: "Review contact submissions collected from the public portfolio form."
+                }
+            };
+
+            const navButtons = Array.from(document.querySelectorAll(".admin-nav-link"));
+            const sections = Array.from(document.querySelectorAll(".admin-section"));
+            const titleEl = document.getElementById("admin-section-title");
+            const descEl = document.getElementById("admin-section-desc");
+            const themeToggle = document.getElementById("admin-theme-toggle");
+
+            const activateSection = (sectionKey) => {
+                navButtons.forEach((button) => {
+                    button.classList.toggle("is-active", button.dataset.section === sectionKey);
+                });
+
+                sections.forEach((section) => {
+                    section.classList.toggle("is-active", section.dataset.section === sectionKey);
+                });
+
+                const meta = sectionMeta[sectionKey];
+                if (meta && titleEl && descEl) {
+                    titleEl.textContent = meta.title;
+                    descEl.textContent = meta.desc;
+                }
+            };
+
+            const syncThemeToggle = () => {
+                if (!themeToggle) return;
+                const isLight = document.body.classList.contains("light-mode");
+                themeToggle.textContent = isLight ? "Dark Mode" : "Light Mode";
+            };
+
+            navButtons.forEach((button) => {
+                button.addEventListener("click", () => activateSection(button.dataset.section));
+            });
+
+            themeToggle?.addEventListener("click", () => {
+                document.body.classList.toggle("light-mode");
+                syncThemeToggle();
+            });
+
+            syncThemeToggle();
+            activateSection(document.querySelector(".admin-nav-link.is-active")?.dataset.section || "hero");
+        })();
+    </script>
+    <script>
+        window.addEventListener(
+            "keydown",
+            (event) => {
+                if (event.key !== "Escape") return;
+                event.preventDefault();
+                event.stopImmediatePropagation();
+            },
+            true
+        );
+    </script>
+    <script>
+        (() => {
+            const text = (selector, root = document) => root.querySelector(selector)?.textContent?.replace(/\s+/g, " ").trim() || "";
+            const valueOf = (id) => document.getElementById(id)?.value?.trim() || "";
+            const setValue = (id, value) => {
+                const field = document.getElementById(id);
+                if (field) field.value = value ?? "";
+            };
+            const href = (selector, root = document) => root.querySelector(selector)?.getAttribute("href") || "";
+            const src = (selector, root = document) => root.querySelector(selector)?.getAttribute("src") || "";
+            const normalizedList = (selector, root = document) =>
+                Array.from(root.querySelectorAll(selector))
+                    .map((item) => item.textContent.replace(/\s+/g, " ").trim())
+                    .filter(Boolean);
+            const clone = (value) => JSON.parse(JSON.stringify(value));
+            const escapeAdminHtml = (value = "") => String(value).replace(/[&<>"']/g, (char) => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                "\"": "&quot;",
+                "'": "&#39;"
+            }[char]));
+
+            const adminState = {
+                originalData: null,
+                currentData: null,
+                booted: false,
+                authReady: false
+            };
+
+            const selectors = {
+                heroMetrics: "#admin-about-metrics",
+                skillGroups: "#admin-skills-groups",
+                projects: "#admin-projects-list",
+                serviceCategories: "#admin-services-categories",
+                services: "#admin-services-list",
+                messages: "#admin-messages-list",
+                saveStatus: "#admin-save-status"
+            };
+
+            const authUi = {
+                body: document.body,
+                dashboard: document.getElementById("admin-dashboard"),
+                loginOverlay: document.getElementById("admin-login-section"),
+                loginForm: document.getElementById("admin-login-form"),
+                loginEmail: document.getElementById("login-email"),
+                loginPassword: document.getElementById("login-pass"),
+                loginButton: document.getElementById("login-btn"),
+                loginError: document.getElementById("login-error"),
+                showLoginButton: document.getElementById("admin-show-login"),
+                logoutButton: document.getElementById("admin-logout"),
+                saveButton: document.getElementById("admin-save"),
+                resetButton: document.getElementById("admin-reset"),
+                refreshMessagesButton: document.getElementById("admin-messages-refresh")
+            };
+
+            const setSaveStatus = (label, state = "idle") => {
+                const el = document.querySelector(selectors.saveStatus);
+                if (!el) return;
+                el.textContent = label;
+                el.style.color = state === "error" ? "#ff8a8a" : state === "saving" ? "#ffd36c" : "";
+                el.style.borderColor = state === "error" ? "rgba(255,138,138,0.35)" : state === "saving" ? "rgba(255,211,108,0.35)" : "";
+                el.style.background = state === "error" ? "rgba(255,82,82,0.12)" : state === "saving" ? "rgba(255,211,108,0.12)" : "";
+            };
+
+            const showLoginError = (message = "") => {
+                if (!authUi.loginError) return;
+                const hasMessage = Boolean(String(message).trim());
+                authUi.loginError.textContent = message;
+                authUi.loginError.hidden = !hasMessage;
+                authUi.loginError.style.display = hasMessage ? "block" : "none";
+            };
+
+            const setLoginPending = (pending, label = "Login") => {
+                if (!authUi.loginButton) return;
+                authUi.loginButton.disabled = pending;
+                authUi.loginButton.textContent = pending ? label : "Login";
+                authUi.loginButton.style.opacity = pending ? "0.75" : "1";
+                authUi.loginButton.style.cursor = pending ? "wait" : "pointer";
+            };
+
+            const setEditorDisabled = (disabled) => {
+                [authUi.saveButton, authUi.resetButton, authUi.refreshMessagesButton].forEach((button) => {
+                    if (!button) return;
+                    button.disabled = disabled;
+                    button.style.opacity = disabled ? "0.6" : "1";
+                    button.style.pointerEvents = disabled ? "none" : "";
+                });
+
+                if (authUi.dashboard) {
+                    authUi.dashboard.inert = disabled;
+                }
+            };
+
+            const setAuthView = (state, user = null) => {
+                authUi.body.classList.remove("admin-auth-loading", "admin-auth-required", "admin-authenticated");
+                authUi.body.classList.add(state === "authenticated" ? "admin-authenticated" : state === "required" ? "admin-auth-required" : "admin-auth-loading");
+
+                const isAuthenticated = state === "authenticated";
+
+                if (authUi.dashboard) {
+                    authUi.dashboard.setAttribute("aria-hidden", String(!isAuthenticated));
+                }
+
+                if (authUi.loginOverlay) {
+                    authUi.loginOverlay.hidden = isAuthenticated;
+                    authUi.loginOverlay.setAttribute("aria-hidden", String(isAuthenticated));
+                    authUi.loginOverlay.style.display = isAuthenticated ? "none" : "flex";
+                }
+
+                if (authUi.showLoginButton) {
+                    authUi.showLoginButton.style.display = isAuthenticated ? "none" : "";
+                }
+
+                if (authUi.logoutButton) {
+                    authUi.logoutButton.style.display = isAuthenticated ? "inline-flex" : "none";
+                }
+
+                setEditorDisabled(!isAuthenticated);
+
+                if (isAuthenticated) {
+                    setSaveStatus(`Signed in${user?.email ? ` as ${user.email}` : ""}`);
+                    showLoginError("");
+                } else if (state === "required") {
+                    setSaveStatus("Sign in required");
+                } else {
+                    setSaveStatus("Checking session...");
+                }
+            };
+
+            const waitForFrameDocument = (frame, timeoutMs = 4000) => new Promise((resolve) => {
+                if (!frame) {
+                    resolve(null);
+                    return;
+                }
+
+                const existingDoc = frame.contentDocument;
+                if (existingDoc?.querySelector("main")) {
+                    resolve(existingDoc);
+                    return;
+                }
+
+                let settled = false;
+                const finalize = (doc = null) => {
+                    if (settled) return;
+                    settled = true;
+                    frame.removeEventListener("load", onLoad);
+                    clearTimeout(timer);
+                    resolve(doc);
+                };
+                const onLoad = () => finalize(frame.contentDocument);
+                const timer = setTimeout(() => finalize(frame.contentDocument || null), timeoutMs);
+
+                frame.addEventListener("load", onLoad, { once: true });
+            });
+
+            const resolvePublicSiteRoot = async () => {
+                const previewFrame = document.querySelector(".admin-preview-iframe");
+                const frameDoc = await waitForFrameDocument(previewFrame);
+                if (frameDoc?.querySelector("main")) {
+                    return frameDoc;
+                }
+
+                try {
+                    const publicUrl = new URL("index.html", window.location.href);
+                    publicUrl.searchParams.set("dashboard_source", String(Date.now()));
+                    const response = await fetch(publicUrl.href, { cache: "no-store" });
+                    if (response.ok) {
+                        const html = await response.text();
+                        const parsed = new DOMParser().parseFromString(html, "text/html");
+                        if (parsed.querySelector("main")) {
+                            return parsed;
+                        }
+                    }
+                } catch (error) {
+                    console.warn("[Admin] Could not fetch index.html, using local fallback.", error);
+                }
+
+                return document;
+            };
+
+            const hasMeaningfulValue = (value) => {
+                if (Array.isArray(value)) return value.length > 0;
+                if (value && typeof value === "object") return Object.keys(value).length > 0;
+                return String(value ?? "").trim() !== "";
+            };
+
+            const mergePreferCurrent = (current, incoming) => {
+                if (!incoming || typeof incoming !== "object") return current;
+                const merged = clone(current);
+
+                Object.entries(incoming).forEach(([key, value]) => {
+                    const existing = merged[key];
+
+                    if (Array.isArray(existing)) {
+                        if (!existing.length && Array.isArray(value)) {
+                            merged[key] = clone(value);
+                        }
+                        return;
+                    }
+
+                    if (existing && typeof existing === "object" && value && typeof value === "object" && !Array.isArray(value)) {
+                        merged[key] = mergePreferCurrent(existing, value);
+                        return;
+                    }
+
+                    if (!hasMeaningfulValue(existing) && hasMeaningfulValue(value)) {
+                        merged[key] = clone(value);
+                    }
+                });
+
+                return merged;
+            };
+
+            const defaultPortfolioData = async () => {
+                const root = await resolvePublicSiteRoot();
+                const liveProjectsData = (() => {
+                    try {
+                        return typeof LIVE_PROJECTS !== "undefined" && Array.isArray(LIVE_PROJECTS)
+                            ? LIVE_PROJECTS
+                            : [];
+                    } catch {
+                        return [];
+                    }
+                })();
+
+                const projectCards = (liveProjectsData.length
+                    ? liveProjectsData.map((project) => ({
+                        title: project.title || "",
+                        category: project.category || "",
+                        description: project.description || "",
+                        details: Array.isArray(project.details) ? project.details : [],
+                        stack: Array.isArray(project.stack) ? project.stack : [],
+                        meta: Array.isArray(project.meta) ? project.meta : [],
+                        highlights: Array.isArray(project.highlights) ? project.highlights : [],
+                        tech: Array.isArray(project.tech) ? project.tech : [],
+                        previewUrl: project.previewUrl || "",
+                        githubUrl: project.githubUrl || "",
+                        visual: project.visual || "",
+                        image: project.image || "",
+                        accent: project.accent || "",
+                        accentSoft: project.accentSoft || ""
+                    }))
+                    : Array.from(root.querySelectorAll(".project-card")).map((card) => ({
+                        title: text(".project-title, h3", card),
+                        category: card.dataset.category || "",
+                        description: text(".project-description, p", card),
+                        details: [],
+                        stack: [],
+                        meta: normalizedList(".project-meta span", card),
+                        highlights: normalizedList(".project-highlights li", card),
+                        tech: normalizedList(".project-tech-tags li", card),
+                        previewUrl: "",
+                        githubUrl: href(".github-btn", card),
+                        visual: "",
+                        image: src(".project-image", card),
+                        accent: "",
+                        accentSoft: ""
+                    })))
+                    .filter((item) => item.title);
+
+                const projectFilters = liveProjectsData.length
+                    ? ["All", "Portfolio", "Web", "UI", "Dashboard"]
+                    : Array.from(root.querySelectorAll(".project-filters .filter-btn, .projects-filters .project-filter"))
+                        .map((item) => item.textContent.replace(/\s+/g, " ").trim())
+                        .filter(Boolean);
+
+                const serviceCards = Array.from(root.querySelectorAll(".service-card")).map((card) => ({
+                    title: text("h3", card),
+                    description: text("p", card),
+                    tags: normalizedList(".service-tags span, .service-meta span", card)
+                })).filter((item) => item.title);
+
+                const serviceCategories = Array.from(root.querySelectorAll(".services-tabs button, .service-filter, .service-pill"))
+                    .map((item) => item.textContent.replace(/\s+/g, " ").trim())
+                    .filter(Boolean);
+
+                const skillGroups = Array.from(root.querySelectorAll(".skill-group")).map((group) => ({
+                    title: text("h3", group),
+                    label: text(".skill-group-label", group),
+                    items: normalizedList(".skill-chip span:last-child", group)
+                }));
+                const totalSkillItems = skillGroups.reduce((sum, group) => sum + group.items.length, 0);
+
+                return {
+                    hero: {
+                        name: text(".hero-text h1 span", root),
+                        roles: root.getElementById("hero-role-typed")?.getAttribute("data-roles")
+                            || text("#hero-role-typed", root),
+                        summary: text(".hero-copy", root),
+                        avatarUrl: src(".hero-avatar-img", root),
+                        avatarAlt: root.querySelector(".hero-avatar-img")?.getAttribute("alt") || "",
+                        primaryText: text(".hero-actions a:nth-child(1)", root),
+                        primaryUrl: href(".hero-actions a:nth-child(1)", root),
+                        secondaryText: text(".hero-actions a:nth-child(2)", root),
+                        secondaryUrl: href(".hero-actions a:nth-child(2)", root)
+                    },
+                    about: {
+                        status: text(".about-status", root),
+                        location: text(".about-location", root),
+                        title: text("#about-title", root),
+                        copy: text(".about-copy", root),
+                        signature: text(".about-signature", root),
+                        metrics: Array.from(root.querySelectorAll(".about-track .about-node")).map((item) => ({
+                            value: text("strong", item),
+                            label: text("span", item)
+                        }))
+                    },
+                    skills: {
+                        title: text("#skills-title", root),
+                        copy: text(".skills-copy", root),
+                        domains: text(".skills-metric:nth-child(1) dd", root) || String(skillGroups.length),
+                        tools: text(".skills-metric:nth-child(2) dd", root) || (totalSkillItems ? `${totalSkillItems}+` : ""),
+                        core: text(".skills-metric:nth-child(3) dd", root),
+                        cloud: text(".skills-metric:nth-child(4) dd", root),
+                        groups: skillGroups,
+                        noteLabel: "Focus:",
+                        note: text(".skills-note", root)
+                    },
+                    projects: {
+                        kicker: text(".live-projects .section-kicker", root) || text("#projects .section-kicker", root),
+                        title: text(".live-projects #projects-title", root) || text("#projects h2", root),
+                        copy: text(".live-projects-copy", root) || text("#projects .section-copy, #projects .projects-copy, #projects p", root),
+                        summaryLabel: text(".live-projects-summary-label", root) || text("#projects .projects-summary strong, #projects .projects-summary-label", root),
+                        summaryCopy: text(".live-projects-summary strong", root) || text("#projects .projects-summary p, #projects .projects-summary-copy", root),
+                        filters: projectFilters,
+                        items: projectCards
+                    },
+                    services: {
+                        title: text("#services h2", root),
+                        copy: text("#services .section-copy, #services .services-copy, #services p", root),
+                        categories: serviceCategories,
+                        items: serviceCards
+                    },
+                    contact: {
+                        title: text("#contact-title", root),
+                        copy: text(".contact-copy", root),
+                        primaryText: text(".contact-actions a:nth-child(1)", root),
+                        primaryUrl: href(".contact-actions a:nth-child(1)", root),
+                        secondaryText: text(".contact-actions a:nth-child(2)", root),
+                        secondaryUrl: href(".contact-actions a:nth-child(2)", root),
+                        email: text(".contact-item:nth-child(1) .contact-value", root),
+                        whatsapp: href(".contact-item:nth-child(2)", root),
+                        location: text(".contact-item:nth-child(3) .contact-value", root),
+                        linkedinLabel: text(".contact-item:nth-child(4) .contact-value", root),
+                        githubLabel: text(".contact-item:nth-child(5) .contact-value", root),
+                        availabilityTitle: text(".contact-availability-title", root),
+                        availabilityCopy: text(".contact-availability-copy", root),
+                        panelTitle: text(".contact-panel-head h3", root),
+                        panelCopy: text(".contact-panel-head p", root),
+                        formTitle: text(".contact-form-head h3", root),
+                        formCopy: text(".contact-form-head p", root),
+                        formNote: text("#contact-status-note", root),
+                        formSubmit: text(".contact-form button[type='submit']", root)
+                    },
+                    social: {
+                        github: href(".hero-social-link[aria-label*='GitHub']", root),
+                        linkedin: href(".hero-social-link[aria-label*='LinkedIn']", root),
+                        whatsapp: href(".hero-social-link[aria-label*='WhatsApp']", root),
+                        email: text(".contact-item:nth-child(1) .contact-value", root)
+                    }
+                };
+            };
+
+            const mergePortfolioData = (defaults, incoming) => {
+                if (!incoming || typeof incoming !== "object") return defaults;
+                return mergePreferCurrent(defaults, incoming);
+            };
+
+            const createEmbeddedImageDataUrl = (file, maxDimension = 1400, quality = 0.82) => new Promise((resolve, reject) => {
+                if (!(file instanceof File) || !file.type.startsWith("image/")) {
+                    reject(new Error("Please choose a valid image file."));
+                    return;
+                }
+
+                const objectUrl = URL.createObjectURL(file);
+                const image = new Image();
+
+                image.onload = () => {
+                    const scale = Math.min(1, maxDimension / Math.max(image.width || 1, image.height || 1));
+                    const width = Math.max(1, Math.round(image.width * scale));
+                    const height = Math.max(1, Math.round(image.height * scale));
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d");
+
+                    if (!context) {
+                        URL.revokeObjectURL(objectUrl);
+                        reject(new Error("Image processing is not supported in this browser."));
+                        return;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    context.drawImage(image, 0, 0, width, height);
+                    URL.revokeObjectURL(objectUrl);
+                    resolve(canvas.toDataURL("image/webp", quality));
+                };
+
+                image.onerror = () => {
+                    URL.revokeObjectURL(objectUrl);
+                    reject(new Error("Could not read the selected image."));
+                };
+
+                image.src = objectUrl;
+            });
+
+            const attachProjectImageUpload = ({ card, index, input }) => {
+                const upload = document.createElement("div");
+                upload.className = "admin-upload";
+                upload.style.marginTop = "10px";
+
+                const fileInput = document.createElement("input");
+                fileInput.type = "file";
+                fileInput.accept = "image/*";
+                fileInput.dataset.projectImageUpload = String(index);
+
+                const body = document.createElement("div");
+                body.className = "admin-upload-body";
+                body.style.gap = "10px";
+
+                const preview = document.createElement("img");
+                preview.alt = `Project ${index + 1} cover preview`;
+                preview.style.width = "100%";
+                preview.style.maxHeight = "150px";
+                preview.style.objectFit = "cover";
+                preview.style.borderRadius = "14px";
+                preview.style.display = "none";
+                preview.style.border = "1px solid rgba(255,255,255,0.08)";
+
+                const title = document.createElement("strong");
+                const hint = document.createElement("span");
+                const status = document.createElement("span");
+                status.style.fontSize = "0.75rem";
+                status.style.color = "var(--text-soft)";
+
+                const syncPreview = (value) => {
+                    const url = String(value || "").trim();
+                    if (url) {
+                        preview.src = url;
+                        preview.style.display = "block";
+                        title.textContent = "Change cover image";
+                        hint.textContent = "Click to replace this project cover.";
+                    } else {
+                        preview.removeAttribute("src");
+                        preview.style.display = "none";
+                        title.textContent = "Upload cover image";
+                        hint.textContent = "PNG, JPG, or WEBP";
+                    }
+                };
+
+                syncPreview(input.value);
+
+                body.appendChild(preview);
+                body.appendChild(title);
+                body.appendChild(hint);
+                body.appendChild(status);
+
+                upload.appendChild(fileInput);
+                upload.appendChild(body);
+                card.appendChild(upload);
+
+                input.addEventListener("input", () => syncPreview(input.value));
+
+                fileInput.addEventListener("change", async () => {
+                    const [file] = fileInput.files || [];
+                    if (!file) return;
+
+                    status.textContent = "Uploading image...";
+                    setSaveStatus("Uploading image...", "saving");
+
+                    try {
+                        const api = window.FirebaseAdminAPI;
+                        if (!api?.uploadPortfolioImage) {
+                            throw new Error("Upload service is not ready yet.");
+                        }
+
+                        const uploadedUrl = await api.uploadPortfolioImage(file, `projects/project-${index + 1}`);
+                        input.value = uploadedUrl;
+                        input.dispatchEvent(new Event("input", { bubbles: true }));
+                        status.textContent = "Image uploaded. Click Save to keep it.";
+                        setSaveStatus("Image ready");
+                    } catch (uploadError) {
+                        console.warn("[Admin] Project image upload failed, using embedded fallback.", uploadError);
+
+                        try {
+                            const embeddedUrl = await createEmbeddedImageDataUrl(file);
+                            input.value = embeddedUrl;
+                            input.dispatchEvent(new Event("input", { bubbles: true }));
+                            status.textContent = "Image embedded locally. Click Save to keep it.";
+                            setSaveStatus("Image ready");
+                        } catch (fallbackError) {
+                            status.textContent = fallbackError.message || uploadError.message || "Upload failed.";
+                            setSaveStatus("Upload failed", "error");
+                        }
+                    } finally {
+                        fileInput.value = "";
+                    }
+                });
+            };
+
+            const renderEditableList = (containerSelector, items, fields) => {
+                const container = document.querySelector(containerSelector);
+                if (!container) return;
+
+                container.innerHTML = "";
+
+                if (!Array.isArray(items) || !items.length) return;
+
+                items.forEach((item, index) => {
+                    const card = document.createElement("div");
+                    card.className = "admin-card";
+                    card.style.padding = "16px";
+
+                    const title = document.createElement("h3");
+                    title.textContent = `${fields.titlePrefix} ${index + 1}`;
+                    title.style.marginBottom = "14px";
+                    card.appendChild(title);
+
+                    fields.inputs.forEach((field) => {
+                        const label = document.createElement("label");
+                        label.className = "admin-field";
+
+                        const span = document.createElement("span");
+                        span.textContent = field.label;
+                        label.appendChild(span);
+
+                        const input = document.createElement(field.multiline ? "textarea" : "input");
+                        if (!field.multiline) input.type = field.type || "text";
+                        if (field.multiline) input.rows = field.rows || 3;
+                        input.dataset.collection = fields.collection;
+                        input.dataset.index = String(index);
+                        input.dataset.key = field.key;
+
+                        const value = item[field.key];
+                        input.value = Array.isArray(value) ? value.join(" | ") : (value ?? "");
+                        label.appendChild(input);
+                        card.appendChild(label);
+
+                        if (fields.collection === "projects.items" && field.key === "image") {
+                            attachProjectImageUpload({ card, index, input });
+                        }
+                    });
+
+                    container.appendChild(card);
+                });
+            };
+
+            const populateDashboard = (data) => {
+                setValue("admin-hero-name", data.hero.name);
+                setValue("admin-hero-roles", data.hero.roles);
+                setValue("admin-hero-copy", data.hero.summary);
+                setValue("admin-hero-avatar", data.hero.avatarUrl);
+                setValue("admin-hero-avatar-alt", data.hero.avatarAlt);
+                setValue("admin-hero-primary-text", data.hero.primaryText);
+                setValue("admin-hero-primary-url", data.hero.primaryUrl);
+                setValue("admin-hero-secondary-text", data.hero.secondaryText);
+                setValue("admin-hero-secondary-url", data.hero.secondaryUrl);
+
+                setValue("admin-about-status", data.about.status);
+                setValue("admin-about-location", data.about.location);
+                setValue("admin-about-title", data.about.title);
+                setValue("admin-about-copy", data.about.copy);
+                setValue("admin-about-signature", data.about.signature);
+
+                setValue("admin-skills-title", data.skills.title);
+                setValue("admin-skills-copy", data.skills.copy);
+                setValue("admin-skills-domains", data.skills.domains);
+                setValue("admin-skills-tools", data.skills.tools);
+                setValue("admin-skills-core", data.skills.core);
+                setValue("admin-skills-cloud", data.skills.cloud);
+                setValue("admin-skills-note-label", data.skills.noteLabel);
+                setValue("admin-skills-note", data.skills.note);
+
+                setValue("admin-projects-kicker", data.projects.kicker);
+                setValue("admin-projects-title", data.projects.title);
+                setValue("admin-projects-copy", data.projects.copy);
+                setValue("admin-projects-summary-label", data.projects.summaryLabel);
+                setValue("admin-projects-summary-copy", data.projects.summaryCopy);
+                setValue("admin-projects-filters", (data.projects.filters || []).join(" | "));
+
+                setValue("admin-services-title", data.services.title);
+                setValue("admin-services-copy", data.services.copy);
+
+                setValue("admin-contact-title", data.contact.title);
+                setValue("admin-contact-copy", data.contact.copy);
+                setValue("admin-contact-primary-text", data.contact.primaryText);
+                setValue("admin-contact-primary-url", data.contact.primaryUrl);
+                setValue("admin-contact-secondary-text", data.contact.secondaryText);
+                setValue("admin-contact-secondary-url", data.contact.secondaryUrl);
+                setValue("admin-contact-email", data.contact.email);
+                setValue("admin-contact-whatsapp", data.contact.whatsapp);
+                setValue("admin-contact-location", data.contact.location);
+                setValue("admin-contact-linkedin-label", data.contact.linkedinLabel);
+                setValue("admin-contact-github-label", data.contact.githubLabel);
+                setValue("admin-contact-availability-title", data.contact.availabilityTitle);
+                setValue("admin-contact-availability-copy", data.contact.availabilityCopy);
+                setValue("admin-contact-panel-title", data.contact.panelTitle);
+                setValue("admin-contact-panel-copy", data.contact.panelCopy);
+                setValue("admin-contact-form-title", data.contact.formTitle);
+                setValue("admin-contact-form-copy", data.contact.formCopy);
+                setValue("admin-contact-form-note", data.contact.formNote);
+                setValue("admin-contact-form-submit", data.contact.formSubmit);
+
+                setValue("admin-social-github", data.social.github);
+                setValue("admin-social-linkedin", data.social.linkedin);
+                setValue("admin-social-whatsapp", data.social.whatsapp);
+                setValue("admin-social-email", data.social.email);
+
+                renderEditableList(selectors.heroMetrics, data.about.metrics, {
+                    collection: "about.metrics",
+                    titlePrefix: "Highlight",
+                    inputs: [
+                        { key: "value", label: "Value" },
+                        { key: "label", label: "Label" }
+                    ]
+                });
+
+                renderEditableList(selectors.skillGroups, data.skills.groups, {
+                    collection: "skills.groups",
+                    titlePrefix: "Skill Group",
+                    inputs: [
+                        { key: "title", label: "Title" },
+                        { key: "label", label: "Label" },
+                        { key: "items", label: "Items", multiline: true, rows: 3 }
+                    ]
+                });
+
+                renderEditableList(selectors.projects, data.projects.items, {
+                    collection: "projects.items",
+                    titlePrefix: "Project",
+                    inputs: [
+                        { key: "title", label: "Title" },
+                        { key: "category", label: "Category" },
+                        { key: "description", label: "Description", multiline: true, rows: 3 },
+                        { key: "details", label: "Details (use |)", multiline: true, rows: 3 },
+                        { key: "stack", label: "Stack (use |)", multiline: true, rows: 2 },
+                        { key: "meta", label: "Meta (legacy)", multiline: true, rows: 2 },
+                        { key: "highlights", label: "Highlights (legacy)", multiline: true, rows: 3 },
+                        { key: "tech", label: "Tech Stack (legacy)", multiline: true, rows: 2 },
+                        { key: "previewUrl", label: "Preview URL", type: "url" },
+                        { key: "visual", label: "Visual Type" },
+                        { key: "image", label: "Image URL", type: "text" },
+                        { key: "githubUrl", label: "GitHub URL", type: "url" },
+                        { key: "accent", label: "Accent Color" },
+                        { key: "accentSoft", label: "Accent Soft" }
+                    ]
+                });
+
+                renderEditableList(selectors.serviceCategories, (data.services.categories || []).map((name) => ({ name })), {
+                    collection: "services.categories",
+                    titlePrefix: "Category",
+                    inputs: [
+                        { key: "name", label: "Name" }
+                    ]
+                });
+
+                renderEditableList(selectors.services, data.services.items, {
+                    collection: "services.items",
+                    titlePrefix: "Service",
+                    inputs: [
+                        { key: "title", label: "Title" },
+                        { key: "description", label: "Description", multiline: true, rows: 3 },
+                        { key: "tags", label: "Tags", multiline: true, rows: 2 }
+                    ]
+                });
+            };
+
+            const collectCollection = (collectionName) => {
+                const fields = Array.from(document.querySelectorAll(`[data-collection='${collectionName}']`));
+                const grouped = new Map();
+
+                fields.forEach((field) => {
+                    const index = Number(field.dataset.index || 0);
+                    const key = field.dataset.key;
+                    if (!grouped.has(index)) grouped.set(index, {});
+                    grouped.get(index)[key] = field.value.trim();
+                });
+
+                return Array.from(grouped.entries())
+                    .sort((a, b) => a[0] - b[0])
+                    .map(([, item]) => Object.fromEntries(
+                        Object.entries(item).map(([key, raw]) => {
+                            if (["items", "details", "stack", "meta", "highlights", "tech", "tags"].includes(key)) {
+                                return [key, raw.split("|").map((part) => part.trim()).filter(Boolean)];
+                            }
+                            return [key, raw];
+                        })
+                    ));
+            };
+
+            const collectDashboardData = () => ({
+                hero: {
+                    name: valueOf("admin-hero-name"),
+                    roles: valueOf("admin-hero-roles"),
+                    summary: valueOf("admin-hero-copy"),
+                    avatarUrl: valueOf("admin-hero-avatar"),
+                    avatarAlt: valueOf("admin-hero-avatar-alt"),
+                    primaryText: valueOf("admin-hero-primary-text"),
+                    primaryUrl: valueOf("admin-hero-primary-url"),
+                    secondaryText: valueOf("admin-hero-secondary-text"),
+                    secondaryUrl: valueOf("admin-hero-secondary-url")
+                },
+                about: {
+                    status: valueOf("admin-about-status"),
+                    location: valueOf("admin-about-location"),
+                    title: valueOf("admin-about-title"),
+                    copy: valueOf("admin-about-copy"),
+                    signature: valueOf("admin-about-signature"),
+                    metrics: collectCollection("about.metrics")
+                },
+                skills: {
+                    title: valueOf("admin-skills-title"),
+                    copy: valueOf("admin-skills-copy"),
+                    domains: valueOf("admin-skills-domains"),
+                    tools: valueOf("admin-skills-tools"),
+                    core: valueOf("admin-skills-core"),
+                    cloud: valueOf("admin-skills-cloud"),
+                    noteLabel: valueOf("admin-skills-note-label"),
+                    note: valueOf("admin-skills-note"),
+                    groups: collectCollection("skills.groups")
+                },
+                projects: {
+                    kicker: valueOf("admin-projects-kicker"),
+                    title: valueOf("admin-projects-title"),
+                    copy: valueOf("admin-projects-copy"),
+                    summaryLabel: valueOf("admin-projects-summary-label"),
+                    summaryCopy: valueOf("admin-projects-summary-copy"),
+                    filters: valueOf("admin-projects-filters").split("|").map((item) => item.trim()).filter(Boolean),
+                    items: collectCollection("projects.items")
+                },
+                services: {
+                    title: valueOf("admin-services-title"),
+                    copy: valueOf("admin-services-copy"),
+                    categories: collectCollection("services.categories").map((item) => item.name).filter(Boolean),
+                    items: collectCollection("services.items")
+                },
+                contact: {
+                    title: valueOf("admin-contact-title"),
+                    copy: valueOf("admin-contact-copy"),
+                    primaryText: valueOf("admin-contact-primary-text"),
+                    primaryUrl: valueOf("admin-contact-primary-url"),
+                    secondaryText: valueOf("admin-contact-secondary-text"),
+                    secondaryUrl: valueOf("admin-contact-secondary-url"),
+                    email: valueOf("admin-contact-email"),
+                    whatsapp: valueOf("admin-contact-whatsapp"),
+                    location: valueOf("admin-contact-location"),
+                    linkedinLabel: valueOf("admin-contact-linkedin-label"),
+                    githubLabel: valueOf("admin-contact-github-label"),
+                    availabilityTitle: valueOf("admin-contact-availability-title"),
+                    availabilityCopy: valueOf("admin-contact-availability-copy"),
+                    panelTitle: valueOf("admin-contact-panel-title"),
+                    panelCopy: valueOf("admin-contact-panel-copy"),
+                    formTitle: valueOf("admin-contact-form-title"),
+                    formCopy: valueOf("admin-contact-form-copy"),
+                    formNote: valueOf("admin-contact-form-note"),
+                    formSubmit: valueOf("admin-contact-form-submit")
+                },
+                social: {
+                    github: valueOf("admin-social-github"),
+                    linkedin: valueOf("admin-social-linkedin"),
+                    whatsapp: valueOf("admin-social-whatsapp"),
+                    email: valueOf("admin-social-email")
+                }
+            });
+
+            const renderMessages = async () => {
+                const container = document.querySelector(selectors.messages);
+                if (!container) return;
+                container.innerHTML = "<p style='color:var(--text-soft,#888);font-size:0.9rem;padding:16px 0;'>Loading messages...</p>";
+
+                try {
+                    const api = window.FirebaseAdminAPI;
+                    if (!api?.listMessages) throw new Error("Messages API not ready.");
+                    const messages = await api.listMessages();
+
+                    if (!messages.length) {
+                        container.innerHTML = "<p style='color:var(--text-soft,#888);font-size:0.9rem;padding:16px 0;'>No messages found.</p>";
+                        return;
+                    }
+
+                    container.innerHTML = messages.map((message) => `
+                        <div class="admin-card" style="padding:16px;">
+                            <div style="display:flex;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:10px;">
+                                <div style="min-width:0;">
+                                    <h3 style="margin:0 0 6px;">${escapeAdminHtml(message.name || "Unknown Sender")}</h3>
+                                    <p style="margin:0;color:var(--text-soft);font-size:0.78rem;">${escapeAdminHtml(message.email || "")}</p>
+                                </div>
+                                ${message._id ? `
+                                    <button
+                                        type="button"
+                                        class="admin-btn admin-btn-danger"
+                                        data-delete-message="${escapeAdminHtml(message._id)}"
+                                        style="min-height:32px;padding:0 12px;border-color:#ff5252;color:#ff8a8a;background:rgba(255,82,82,0.08);flex-shrink:0;"
+                                    >
+                                        Delete
+                                    </button>
+                                ` : ""}
+                            </div>
+                            <p style="margin:0 0 8px;color:var(--text-soft);font-size:0.82rem;">${escapeAdminHtml(message.projectType || "")}</p>
+                            <p style="margin:0;white-space:pre-wrap;">${escapeAdminHtml(message.message || "")}</p>
+                        </div>
+                    `).join("");
+                } catch (error) {
+                    container.innerHTML = `<p style='color:#ff8a8a;font-size:0.9rem;padding:16px 0;'>${error.message}</p>`;
+                }
+            };
+
+            const initDashboardData = async () => {
+                const defaults = await defaultPortfolioData();
+                let merged = defaults;
+
+                try {
+                    const api = window.FirebaseAdminAPI;
+                    if (api?.loadPortfolioData) {
+                        const remote = await api.loadPortfolioData();
+                        merged = mergePortfolioData(defaults, remote);
+                    }
+                } catch (error) {
+                    console.warn("[Admin] Falling back to DOM defaults.", error);
+                }
+
+                adminState.originalData = clone(merged);
+                adminState.currentData = clone(merged);
+                populateDashboard(merged);
+                setSaveStatus("Data loaded");
+            };
+
+            const ensureAdminBooted = async () => {
+                if (adminState.booted) return;
+                await initDashboardData();
+                await renderMessages();
+                adminState.booted = true;
+            };
+
+            document.getElementById("admin-reset")?.addEventListener("click", () => {
+                if (!adminState.originalData) return;
+                populateDashboard(clone(adminState.originalData));
+                setSaveStatus("Reset complete");
+            });
+
+            document.getElementById("admin-save")?.addEventListener("click", async () => {
+                const api = window.FirebaseAdminAPI;
+                if (!api?.savePortfolioData) {
+                    setSaveStatus("Firebase not ready", "error");
+                    return;
+                }
+
+                const payload = collectDashboardData();
+                setSaveStatus("Saving...", "saving");
+
+                try {
+                    await api.savePortfolioData(payload);
+                    adminState.originalData = clone(payload);
+                    adminState.currentData = clone(payload);
+                    setSaveStatus("Saved");
+                } catch (error) {
+                    console.error("[Admin] Save failed:", error);
+                    setSaveStatus(error?.message ? `Save failed: ${error.message}` : "Save failed", "error");
+                }
+            });
+
+            document.getElementById("admin-messages-refresh")?.addEventListener("click", renderMessages);
+
+            document.querySelector(selectors.messages)?.addEventListener("click", async (event) => {
+                const button = event.target.closest("[data-delete-message]");
+                if (!button) return;
+
+                const messageId = button.dataset.deleteMessage;
+                if (!messageId) return;
+
+                const confirmed = window.confirm("Delete this message permanently?");
+                if (!confirmed) return;
+
+                const api = window.FirebaseAdminAPI;
+                if (!api?.deleteMessage) {
+                    setSaveStatus("Delete is not available", "error");
+                    return;
+                }
+
+                const originalLabel = button.textContent;
+                button.disabled = true;
+                button.textContent = "Deleting...";
+
+                try {
+                    await api.deleteMessage(messageId);
+                    setSaveStatus("Message deleted");
+                    await renderMessages();
+                } catch (error) {
+                    console.error("[Admin] Delete message failed:", error);
+                    setSaveStatus(error?.message ? `Delete failed: ${error.message}` : "Delete failed", "error");
+                    button.disabled = false;
+                    button.textContent = originalLabel;
+                }
+            });
+
+            authUi.showLoginButton?.addEventListener("click", () => {
+                setAuthView("required");
+                showLoginError("");
+                authUi.loginEmail?.focus();
+            });
+
+            authUi.loginForm?.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                showLoginError("");
+
+                const email = authUi.loginEmail?.value?.trim() || "";
+                const password = authUi.loginPassword?.value || "";
+
+                if (!email || !password) {
+                    showLoginError("Enter your Firebase email and password.");
+                    return;
+                }
+
+                const api = window.FirebaseAdminAPI;
+                if (!api?.login) {
+                    showLoginError("Firebase auth is not ready yet. Try again in a moment.");
+                    return;
+                }
+
+                setLoginPending(true, "Signing in...");
+
+                try {
+                    await api.login(email, password);
+                    authUi.loginPassword.value = "";
+                    showLoginError("");
+                } catch (error) {
+                    console.error("[Admin] Login failed:", error);
+                    showLoginError(error?.message || "Login failed. Check your credentials.");
+                } finally {
+                    setLoginPending(false);
+                }
+            });
+
+            authUi.logoutButton?.addEventListener("click", async () => {
+                const api = window.FirebaseAdminAPI;
+                if (!api?.logout) {
+                    showLoginError("Firebase auth is not ready yet.");
+                    return;
+                }
+
+                authUi.logoutButton.disabled = true;
+                authUi.logoutButton.textContent = "Signing out...";
+
+                try {
+                    await api.logout();
+                } catch (error) {
+                    console.error("[Admin] Logout failed:", error);
+                    showLoginError(error?.message || "Logout failed.");
+                } finally {
+                    authUi.logoutButton.disabled = false;
+                    authUi.logoutButton.textContent = "Logout";
+                }
+            });
+
+            const handleAuthState = async (user) => {
+                adminState.authReady = true;
+
+                if (user) {
+                    setAuthView("authenticated", user);
+                    try {
+                        await ensureAdminBooted();
+                        await renderMessages();
+                    } catch (error) {
+                        console.error("[Admin] Failed to initialize dashboard after login:", error);
+                        setSaveStatus("Dashboard load failed", "error");
+                    }
+                    return;
+                }
+
+                const messagesList = document.querySelector(selectors.messages);
+                if (messagesList) {
+                    messagesList.innerHTML = "<p style='color:var(--text-soft,#888);font-size:0.9rem;padding:16px 0;'>Sign in to load messages.</p>";
+                }
+                setAuthView("required");
+                authUi.loginPassword && (authUi.loginPassword.value = "");
+                authUi.loginEmail?.focus();
+            };
+
+            const initFirebaseAuth = () => {
+                const api = window.FirebaseAdminAPI;
+                if (!api?.onAuthStateChanged) {
+                    setAuthView("required");
+                    showLoginError("Firebase auth is not available.");
+                    return;
+                }
+
+                setAuthView("loading");
+                api.onAuthStateChanged((user) => {
+                    handleAuthState(user);
+                });
+            };
+
+            setAuthView("loading");
+            setLoginPending(false);
+
+            if (window.__firebaseReady) {
+                initFirebaseAuth();
+            } else {
+                window.addEventListener("firebase-ready", initFirebaseAuth, { once: true });
+            }
+        })();
+    </script>
+</body>
+</html>

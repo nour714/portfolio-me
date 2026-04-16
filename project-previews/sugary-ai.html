@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sugary AI Preview</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #07111f;
+            --panel: rgba(14, 27, 49, 0.92);
+            --panel-soft: rgba(255, 255, 255, 0.04);
+            --line: rgba(136, 180, 216, 0.16);
+            --text: #f3fbff;
+            --muted: #8fa7c1;
+            --accent: #1cf2c8;
+            --accent-2: #2ab1ff;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(28, 242, 200, 0.16), transparent 28%),
+                linear-gradient(180deg, #07111f 0%, #09182c 100%);
+            color: var(--text);
+        }
+
+        .shell {
+            padding: 28px;
+            display: grid;
+            gap: 22px;
+        }
+
+        .topbar,
+        .panel {
+            border: 1px solid var(--line);
+            background: var(--panel);
+            box-shadow: 0 20px 46px rgba(0, 0, 0, 0.24);
+        }
+
+        .topbar {
+            padding: 16px 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand strong {
+            display: block;
+            font-size: 1rem;
+        }
+
+        .brand span,
+        .meta,
+        .panel p,
+        .list li {
+            color: var(--muted);
+        }
+
+        .status {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(28, 242, 200, 0.08);
+            border: 1px solid rgba(28, 242, 200, 0.18);
+            color: var(--accent);
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 22px;
+        }
+
+        .panel {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        h1, h2, h3, p { margin: 0; }
+
+        h1 {
+            font-size: clamp(1.9rem, 4vw, 3rem);
+            line-height: 1.05;
+            margin-top: 10px;
+        }
+
+        .hero-copy {
+            margin-top: 14px;
+            max-width: 58ch;
+            line-height: 1.75;
+        }
+
+        .stats {
+            margin-top: 22px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .stat {
+            padding: 18px;
+            border-radius: 20px;
+            background: var(--panel-soft);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat strong {
+            display: block;
+            margin-top: 8px;
+            font-size: 1.5rem;
+        }
+
+        .hero-side {
+            display: grid;
+            gap: 14px;
+        }
+
+        .pulse {
+            height: 180px;
+            border-radius: 22px;
+            border: 1px solid rgba(28, 242, 200, 0.14);
+            background:
+                linear-gradient(180deg, rgba(28, 242, 200, 0.08), transparent 70%),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                rgba(5, 13, 25, 0.84);
+            background-size: auto, 42px 42px, 42px 42px, auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pulse::before {
+            content: "";
+            position: absolute;
+            inset: auto -6% 28px;
+            height: 2px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                transparent 8%,
+                var(--accent) 18%,
+                var(--accent-2) 28%,
+                transparent 40%,
+                transparent 52%,
+                var(--accent) 64%,
+                transparent 78%,
+                transparent 100%);
+            box-shadow: 0 0 16px rgba(28, 242, 200, 0.6);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .list {
+            margin: 18px 0 0;
+            padding-left: 18px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .mini-card {
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: var(--panel-soft);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (max-width: 900px) {
+            .hero,
+            .grid,
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <div class="topbar">
+            <div class="brand">
+                <strong>Sugary AI</strong>
+                <span>Diabetes analysis dashboard preview</span>
+            </div>
+            <div class="status">Live Monitoring</div>
+        </div>
+
+        <section class="hero">
+            <div class="panel">
+                <div class="meta">Personalized healthcare intelligence</div>
+                <h1>Track glucose behavior with faster, clearer insight.</h1>
+                <p class="hero-copy">
+                    A premium health analytics experience for surfacing risk changes, treatment signals,
+                    and patient-friendly recommendations from complex clinical data.
+                </p>
+
+                <div class="stats">
+                    <div class="stat">
+                        <span class="meta">Stability Score</span>
+                        <strong>84%</strong>
+                    </div>
+                    <div class="stat">
+                        <span class="meta">Active Care Plans</span>
+                        <strong>128</strong>
+                    </div>
+                    <div class="stat">
+                        <span class="meta">Alerts Today</span>
+                        <strong>12</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-side">
+                <div class="panel pulse"></div>
+                <div class="mini-card">
+                    <span class="meta">Recommended action</span>
+                    <h3 style="margin-top:8px;">Review evening spikes for 7 patients</h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid">
+            <div class="panel">
+                <h2>Care Highlights</h2>
+                <ul class="list">
+                    <li>Patient segmentation based on risk bands and trend direction.</li>
+                    <li>Simple card-based summaries for quick clinical scanning.</li>
+                    <li>Glucose signal monitoring with attention to sudden anomalies.</li>
+                </ul>
+            </div>
+
+            <div class="panel">
+                <h2>Insight Snapshot</h2>
+                <ul class="list">
+                    <li>Morning response improved by 6.8% week-over-week.</li>
+                    <li>Meal-linked variability is concentrated in one cohort.</li>
+                    <li>Medication adherence impact is now visually grouped.</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
