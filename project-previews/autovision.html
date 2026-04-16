@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoVision Preview</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #050c18;
+            --panel: rgba(11, 20, 37, 0.92);
+            --line: rgba(126, 163, 208, 0.16);
+            --text: #edf7ff;
+            --muted: #91a9c4;
+            --accent: #33b1ff;
+            --accent-2: #7dffcf;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(51, 177, 255, 0.16), transparent 30%),
+                linear-gradient(180deg, #050c18 0%, #091425 100%);
+        }
+        .shell {
+            padding: 28px;
+            display: grid;
+            gap: 20px;
+        }
+        .panel {
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: var(--panel);
+            box-shadow: 0 20px 46px rgba(0, 0, 0, 0.28);
+        }
+        .hero {
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 18px;
+            align-items: end;
+        }
+        .hero p, .meta { color: var(--muted); }
+        .badge {
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(51, 177, 255, 0.22);
+            background: rgba(51, 177, 255, 0.08);
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.82rem;
+        }
+        h1, h2, h3, p { margin: 0; }
+        h1 {
+            margin-top: 8px;
+            font-size: clamp(1.8rem, 4vw, 2.9rem);
+            line-height: 1.08;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+        }
+        .feed {
+            padding: 18px;
+        }
+        .feed-screen {
+            position: relative;
+            min-height: 360px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background:
+                linear-gradient(180deg, rgba(51, 177, 255, 0.12), transparent 50%),
+                linear-gradient(135deg, #111f35 0%, #0a1323 100%);
+        }
+        .feed-screen::before,
+        .feed-screen::after {
+            content: "";
+            position: absolute;
+            border: 2px solid rgba(125, 255, 207, 0.8);
+            border-radius: 18px;
+        }
+        .feed-screen::before {
+            inset: 16% 54% 34% 10%;
+        }
+        .feed-screen::after {
+            inset: 30% 20% 18% 44%;
+            border-color: rgba(51, 177, 255, 0.8);
+        }
+        .scanline {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 22%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            box-shadow: 0 0 22px rgba(51, 177, 255, 0.6);
+        }
+        .side {
+            display: grid;
+            gap: 20px;
+        }
+        .card {
+            padding: 20px;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 16px;
+        }
+        .metric {
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .metric strong {
+            display: block;
+            margin-top: 8px;
+            font-size: 1.4rem;
+        }
+        .events {
+            display: grid;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .event {
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        @media (max-width: 900px) {
+            .hero,
+            .layout,
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <section class="panel hero">
+            <div>
+                <div class="meta">Computer vision preview</div>
+                <h1>Track incoming vehicles with a clean, real-time operations view.</h1>
+                <p style="margin-top:14px; max-width:56ch; line-height:1.75;">
+                    AutoVision combines detection, event logging, and status updates into a single
+                    interface designed for fast operational awareness.
+                </p>
+            </div>
+            <div class="badge">Realtime Pipeline</div>
+        </section>
+
+        <section class="layout">
+            <div class="panel feed">
+                <div class="meta">Smart feed canvas</div>
+                <div class="feed-screen" style="margin-top:14px;">
+                    <div class="scanline"></div>
+                </div>
+            </div>
+
+            <div class="side">
+                <div class="panel card">
+                    <h2>Detection Metrics</h2>
+                    <div class="metrics">
+                        <div class="metric">
+                            <span class="meta">Detections</span>
+                            <strong>143</strong>
+                        </div>
+                        <div class="metric">
+                            <span class="meta">Accuracy</span>
+                            <strong>95%</strong>
+                        </div>
+                        <div class="metric">
+                            <span class="meta">Avg. Delay</span>
+                            <strong>0.8s</strong>
+                        </div>
+                        <div class="metric">
+                            <span class="meta">Tracks Active</span>
+                            <strong>09</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel card">
+                    <h2>Recent Events</h2>
+                    <div class="events">
+                        <div class="event">Vehicle 02 entered wash lane and status changed to processing.</div>
+                        <div class="event">Camera B confidence improved after light compensation.</div>
+                        <div class="event">Exit confirmation synced with daily throughput summary.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

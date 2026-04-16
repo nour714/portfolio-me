@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio of Nour, AI Engineer & Web Developer.">
+    <title>Nour | AI Engineer & Web Developer</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress-bar" aria-hidden="true"></div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-ring" aria-hidden="true"></div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" aria-label="Back to top">
+        <svg viewBox="0 0 24 24">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
+    <!-- Project Preview Modal -->
+    <div id="project-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="project-modal-title"
+        aria-hidden="true">
+        <div class="project-preview-modal" role="document">
+            <button class="project-modal-close" id="project-modal-close" aria-label="Close modal">
+                <svg viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+
+            <div class="project-preview-modal__intro">
+                <div class="project-preview-modal__copy">
+                    <span class="project-preview-modal__eyebrow">Live Preview</span>
+                    <h2 class="project-preview-modal__title" id="project-modal-title">Project Preview</h2>
+                    <p class="project-preview-modal__description" id="project-modal-description">
+                        Preview the selected project without leaving the portfolio.
+                    </p>
+                    <ul class="project-preview-modal__details" id="project-modal-details"></ul>
+                </div>
+
+                <div class="project-preview-modal__meta">
+                    <ul class="project-preview-modal__tags" id="project-modal-tags"></ul>
+                    <a href="#" class="project-preview-modal__external" id="project-modal-external" target="_blank"
+                        rel="noopener noreferrer">
+                        Open in New Tab
+                    </a>
+                </div>
+            </div>
+
+            <div class="project-laptop">
+                <div class="project-laptop__screen">
+                    <div class="project-laptop__chrome" aria-hidden="true">
+                        <span class="project-laptop__dot project-laptop__dot--danger"></span>
+                        <span class="project-laptop__dot project-laptop__dot--warning"></span>
+                        <span class="project-laptop__dot project-laptop__dot--success"></span>
+                        <span class="project-laptop__camera"></span>
+                    </div>
+                    <div class="project-laptop__loader" id="project-modal-loader" aria-hidden="true">
+                        <span class="project-laptop__loader-ring"></span>
+                        <span class="project-laptop__loader-text">Loading preview...</span>
+                    </div>
+                    <iframe id="project-modal-iframe" class="project-laptop__iframe" src="about:blank"
+                        title="Project live preview" loading="eager"></iframe>
+                </div>
+                <div class="project-laptop__base" aria-hidden="true">
+                    <span class="project-laptop__trackpad"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Matrix Animated Background -->
+    <canvas id="matrix-bg" aria-hidden="true"></canvas>
+
+    <div class="bg-effects" aria-hidden="true">
+        <span class="ring"></span>
+        <span class="glow glow-top-right"></span>
+        <span class="glow glow-bottom-left"></span>
+    </div>
+
+    <header class="site-header">
+        <nav class="nav-shell" aria-label="Primary">
+            <a href="#hero" class="brand">
+                <span class="brand-dot"></span>
+                Nour
+            </a>
+
+            <ul class="nav-list" id="nav-list">
+                <div class="nav-indicator"></div>
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" type="button" aria-pressed="false"
+                    aria-label="Switch to light mode" title="Toggle theme">
+                    <span class="theme-toggle-text">Light</span>
+                </button>
+                <button class="menu-toggle" aria-expanded="false" aria-controls="nav-list"
+                    aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <div class="hero-layout">
+                    <div class="hero-text">
+                        <h1>Hi, I'm <span>Nour</span></h1>
+                        <p class="hero-role">
+                            <span class="role-typed" id="hero-role-typed" data-roles="AI Engineer | Web Developer | Frontend Developer | UI/UX Design">Web Developer</span>
+                            <span class="role-cursor" aria-hidden="true"></span>
+                        </p>
+                        <p class="hero-copy">
+                            Web developer and student at the Faculty of Artificial Intelligence, Kafrelsheikh University. I build responsive, modern, and user-focused web interfaces with clean code, smooth interactions, and practical solutions for clients, freelancers, and growing brands.
+                        </p>
+                        <div class="hero-cta-group">
+                            <div class="hero-socials" aria-label="Social links">
+                                <a href="https://github.com/nour714/nour714" class="hero-social-link" target="_blank" rel="noopener noreferrer"
+                                    aria-label="GitHub Profile">
+                                    <i class="devicon-github-original" aria-hidden="true"></i>
+                                </a>
+                                <a href="https://wa.me/201021310147" class="hero-social-link" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"
+                                        aria-hidden="true">
+                                        <path
+                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                                    </svg>
+                                </a>
+                                <a href="https://www.linkedin.com/in/nour-wael-aa63b7365?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="hero-social-link" target="_blank" rel="noopener noreferrer"
+                                    aria-label="LinkedIn Profile">
+                                    <i class="devicon-linkedin-plain" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                            <div class="hero-actions">
+                                <a href="mailto:noureg122@gmail.com" class="hero-btn">Hire Me</a>
+                                <a href="#projects" class="hero-btn hero-btn-secondary">View Projects</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <figure class="hero-visual">
+                        <div class="hero-avatar-shell">
+                            <div class="hero-float-icon icon-1"><i class="devicon-css3-plain colored"></i></div>
+                            <span class="hero-avatar-halo" aria-hidden="true"></span>
+                            <span class="hero-avatar-orbit hero-avatar-orbit-one" aria-hidden="true"></span>
+                            <span class="hero-avatar-orbit hero-avatar-orbit-two" aria-hidden="true"></span>
+                            <div class="hero-avatar-core">
+                                <img src="images/img.jpg" alt="Nour portrait" class="hero-avatar-img" loading="eager"
+                                    decoding="async" fetchpriority="high"
+                                    data-fallback-src="images/img.jpg">
+                            </div>
+                            <div class="hero-float-icon icon-2"><i class="devicon-firebase-plain colored"></i></div>
+                            <div class="hero-float-icon icon-3"><i class="devicon-react-original colored"></i></div>
+                        </div>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <section class="about" id="about" aria-labelledby="about-title">
+            <div class="section-shell about-shell">
+                <p class="section-kicker">About</p>
+                <div class="about-panel">
+                    <div class="about-topline">
+                        <span class="about-status">Available for Web Projects</span>
+                        <span class="about-location">Egypt · Remote</span>
+                    </div>
+
+                    <h2 id="about-title">
+                        Building modern, responsive, and high-performance web solutions.
+                    </h2>
+
+                    <p class="about-copy">
+                        My name is Nour Eldin Wael, an AI Engineer and web developer student at the Faculty of Artificial Intelligence, Kafrelsheikh University. I specialize in bridging the gap between intelligent systems and modern, high-performance web applications. With a strong foundation in full-stack development and a growing expertise in AI technologies, I craft end-to-end solutions that are not just functional, but smart and user-centric. I am committed to writing clean, efficient code and leveraging advanced algorithms to solve complex digital challenges. I approach every project with a refined attention to detail and a genuine enthusiasm for building the next generation of intelligent web experiences.
+                    </p>
+
+                    <div class="about-track" aria-label="Key highlights">
+                        <article class="about-node">
+                            <strong>AI Focus</strong>
+                            <span>Intelligent Systems</span>
+                        </article>
+                        <article class="about-node">
+                            <strong>Modern UI</strong>
+                            <span>Responsive Design</span>
+                        </article>
+                        <article class="about-node">
+                            <strong>Clean Code</strong>
+                            <span>Performance Focused</span>
+                        </article>
+                    </div>
+
+                    <p class="about-signature">
+                        Technical Scope: AI Systems, Python, ++C, HTML5, CSS3, JavaScript, Node.js, and beyond.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="skills" id="skills" aria-labelledby="skills-title">
+            <div class="section-shell skills-shell">
+                <p class="section-kicker">Skills</p>
+
+                <div class="skills-headline">
+                    <div class="skills-title-wrap">
+                        <h2 id="skills-title">Technical Skill Architecture</h2>
+                        <p class="skills-copy">
+                            A comprehensive overview of my web development stack, covering modern frontend design,
+                            robust backend systems, and professional collaboration workflows.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="skills-board" aria-label="Web Development Skills Categories">
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Frontend Foundation</h3>
+                            <span class="skill-group-label">Core UI</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><i class="skill-icon devicon-html5-plain colored" aria-hidden="true"></i><span>HTML5</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-css3-plain colored" aria-hidden="true"></i><span>CSS3</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-javascript-plain colored" aria-hidden="true"></i><span>JavaScript</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-figma-plain colored" aria-hidden="true"></i><span>UI/UX Principles</span></li>
+                        </ul>
+                    </article>
+
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Backend & Integration</h3>
+                            <span class="skill-group-label">Logic & Data</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><i class="skill-icon devicon-nodejs-plain colored" aria-hidden="true"></i><span>Node.js</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-fastapi-plain colored" aria-hidden="true"></i><span>RESTful APIs</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">SQL</span><span>SQL Databases</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">SEC</span><span>Security Best Practices</span></li>
+                        </ul>
+                    </article>
+
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Programming Core</h3>
+                            <span class="skill-group-label">Languages</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><i class="skill-icon devicon-python-plain colored" aria-hidden="true"></i><span>Python</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-cplusplus-plain colored" aria-hidden="true"></i><span>C++</span></li>
+                            <li class="skill-chip"><i class="skill-icon devicon-c-plain colored" aria-hidden="true"></i><span>C</span></li>
+                        </ul>
+                    </article>
+
+                    <article class="skill-group">
+                        <div class="skill-group-head">
+                            <h3>Workflow & Soft Skills</h3>
+                            <span class="skill-group-label">Engineering</span>
+                        </div>
+                        <ul class="skill-tags">
+                            <li class="skill-chip"><i class="skill-icon devicon-git-plain colored" aria-hidden="true"></i><span>Git & GitHub</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">PS</span><span>Problem-Solving</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">CT</span><span>Teamwork</span></li>
+                            <li class="skill-chip"><span class="skill-icon fallback-icon" aria-hidden="true">CM</span><span>Communication</span></li>
+                        </ul>
+                    </article>
+                </div>
+
+                <p class="skills-note">
+                    <strong>Focus:</strong> I leverage these tools to build clean, maintainable, and high-performance solutions that meet both user needs and business objectives.
+                </p>
+            </div>
+        </section>
+
+        <section class="projects live-projects" id="projects" aria-labelledby="projects-title">
+            <div class="section-shell live-projects-shell">
+                <div class="live-projects-intro reveal">
+                    <div class="live-projects-copy-block">
+                        <p class="section-kicker">Portfolio</p>
+                        <h2 id="projects-title">Live Projects</h2>
+                        <p class="live-projects-copy">
+                            A curated selection of polished builds focused on responsive interfaces, clean architecture,
+                            and practical developer workflows.
+                        </p>
+                    </div>
+
+                    <aside class="live-projects-summary" aria-label="Project section summary">
+                        <span class="live-projects-summary-label">Frontend Delivery</span>
+                        <strong>
+                            Modern interfaces with subtle motion, strong UX structure, and production-ready code.
+                        </strong>
+                    </aside>
+                </div>
+
+                <div class="project-filters reveal" aria-label="Filter projects by category">
+                    <button class="filter-btn is-active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="portfolio">Portfolio</button>
+                    <button class="filter-btn" data-filter="web">Web</button>
+                    <button class="filter-btn" data-filter="ui">UI</button>
+                    <button class="filter-btn" data-filter="dashboard">Dashboard</button>
+                </div>
+
+                <div class="live-projects-grid" id="live-projects-grid" aria-label="Live projects list"></div>
+            </div>
+        </section>
+
+        <section class="services" id="services" aria-labelledby="services-title">
+            <div class="section-shell services-shell">
+                <div class="services-intro">
+                    <p class="section-kicker">Services</p>
+                    <div class="services-header">
+                        <div class="services-title-wrap">
+                            <h2 id="services-title">High-Impact Digital Solutions</h2>
+                            <p class="services-mini-label">Services</p>
+                            <p class="services-copy">
+                                I provide end-to-end technical expertise to help businesses and individuals
+                                build scalable, intelligent, and user-centric digital products.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="services-grid">
+                    <article class="service-card interactive-card reveal">
+                        <div class="service-card__top">
+                            <span class="service-card__eyebrow">Portfolio Systems</span>
+                            <div class="service-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="service-card__body">
+                            <h3>Portfolio &amp; Business Websites</h3>
+                            <p>Premium CV websites, business sites, and launch pages designed to build trust and turn attention into action.</p>
+                            <ul class="service-features">
+                                <li>CV Sites</li>
+                                <li>Business Web</li>
+                                <li>Landing Pages</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="service-card interactive-card reveal">
+                        <div class="service-card__top">
+                            <span class="service-card__eyebrow">Product Engineering</span>
+                            <div class="service-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="service-card__body">
+                            <h3>Frontend to Full-Stack Builds</h3>
+                            <p>Responsive interfaces, scalable backend logic, and complete web applications built with clean architecture from end to end.</p>
+                            <ul class="service-features">
+                                <li>Frontend UI</li>
+                                <li>Backend Logic</li>
+                                <li>Full Stack</li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="service-card interactive-card reveal">
+                        <div class="service-card__top">
+                            <span class="service-card__eyebrow">Growth Infrastructure</span>
+                            <div class="service-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                                    <path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3"></path>
+                                    <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="service-card__body">
+                            <h3>API, Data &amp; Ongoing Support</h3>
+                            <p>Stable integrations, reliable data structure, and long-term maintenance that keeps digital products healthy after launch.</p>
+                            <ul class="service-features">
+                                <li>API Integration</li>
+                                <li>Databases</li>
+                                <li>Maintenance</li>
+                            </ul>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact" id="contact" aria-labelledby="contact-title">
+            <div class="section-shell contact-shell">
+                <p class="section-kicker">Contact</p>
+                <div class="contact-header">
+                    <div class="contact-title-wrap">
+                        <h2 id="contact-title">Let's build something impactful</h2>
+                        <p class="contact-copy">
+                            Available for remote roles, freelance projects, and design-heavy frontend development. 
+                            Share your brief and I will respond with a clear plan and next steps.
+                        </p>
+                    </div>
+                    <div class="contact-actions">
+                        <a href="mailto:noureg122@gmail.com" class="contact-btn contact-btn-primary">Email Me</a>
+                        <a href="https://wa.me/201021310147" class="contact-btn contact-btn-ghost">WhatsApp Me</a>
+                    </div>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-panel">
+                        <div class="contact-panel-head">
+                            <h3>Reach Me Directly</h3>
+                            <p>Fastest response via WhatsApp or Email. LinkedIn is best for quick introductions.</p>
+                        </div>
+
+                        <div class="contact-list">
+                            <a class="contact-item" href="mailto:noureg122@gmail.com">
+                                <span class="contact-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path
+                                            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                                        </path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                </span>
+                                <span>
+                                    <span class="contact-label">Email</span>
+                                    <span class="contact-value">noureg122@gmail.com</span>
+                                </span>
+                            </a>
+
+                            <a class="contact-item" href="https://wa.me/201021310147" target="_blank"
+                                rel="noopener noreferrer">
+                                <span class="contact-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"
+                                        aria-hidden="true">
+                                        <path
+                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                                    </svg>
+                                </span>
+                                <span>
+                                    <span class="contact-label">WhatsApp</span>
+                                    <span class="contact-value">01021310147</span>
+                                </span>
+                            </a>
+
+                            <div class="contact-item">
+                                <span class="contact-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10z"></path>
+                                        <circle cx="12" cy="11" r="2.5"></circle>
+                                    </svg>
+                                </span>
+                                <span>
+                                    <span class="contact-label">Location</span>
+                                    <span class="contact-value">Egypt · Remote</span>
+                                </span>
+                            </div>
+
+                            <a class="contact-item"
+                                href="https://www.linkedin.com/in/nour-wael-aa63b7365?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                                target="_blank" rel="noopener noreferrer">
+                                <span class="contact-icon" aria-hidden="true">
+                                    <i class="devicon-linkedin-plain" aria-hidden="true"></i>
+                                </span>
+                                <span>
+                                    <span class="contact-label">LinkedIn</span>
+                                    <span class="contact-value">Connect for collaboration</span>
+                                </span>
+                            </a>
+
+                            <a class="contact-item" href="https://github.com/nour714/nour714" target="_blank"
+                                rel="noopener noreferrer">
+                                <span class="contact-icon" aria-hidden="true">
+                                    <i class="devicon-github-original" aria-hidden="true"></i>
+                                </span>
+                                <span>
+                                    <span class="contact-label">GitHub</span>
+                                    <span class="contact-value">View repositories</span>
+                                </span>
+                            </a>
+                        </div>
+
+                        <div class="contact-availability">
+                            <p class="contact-availability-title">Availability</p>
+                            <p class="contact-availability-copy">
+                                Currently accepting new frontend challenges and freelance inquiries. Response time 
+                                within 24-48 hours.
+                            </p>
+                        </div>
+                    </div>
+
+                    <form id="contact-form" class="contact-form">
+                        <div class="contact-form-head">
+                            <h3>Project Brief</h3>
+                            <p>Share scope, timeline, and the outcome you want to achieve.</p>
+                        </div>
+
+                        <div class="contact-form-grid">
+                            <label class="contact-field">
+                                <span>Full Name</span>
+                                <input type="text" name="name" placeholder="Your name" required autocomplete="name">
+                            </label>
+                            <label class="contact-field">
+                                <span>Email</span>
+                                <input type="email" name="email" placeholder="you@email.com" required autocomplete="email">
+                            </label>
+                        </div>
+
+                        <label class="contact-field">
+                            <span>Project Type</span>
+                            <select name="project_type">
+                                <option value="Web Development">Full Stack Web Development</option>
+                                <option value="UI/UX Design">UI/UX Design & Prototyping</option>
+                                <option value="E-commerce">E-commerce Solution</option>
+                                <option value="Consulting">Technical Consulting</option>
+                            </select>
+                        </label>
+
+                        <label class="contact-field">
+                            <span>Message</span>
+                            <textarea name="message" rows="4"
+                                placeholder="Tell me about your project goals."></textarea>
+                        </label>
+
+                        <input
+                            type="text"
+                            name="website"
+                            tabindex="-1"
+                            autocomplete="off"
+                            aria-hidden="true"
+                            style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"
+                        >
+
+                        <div class="contact-form-footer">
+                            <p class="contact-note" id="contact-status-note">Your message will be sent securely to my
+                                inbox.</p>
+                            <button type="submit" class="contact-btn contact-btn-primary">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer
+        style="position:relative;z-index:2;padding:48px clamp(18px,6vw,60px) 32px;border-top:1px solid rgba(108,148,255,0.16);">
+        <div
+            style="max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;">
+            <div>
+                <p style="font-size:1.2rem;font-weight:800;background:linear-gradient(135deg, var(--accent), var(--accent-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;filter:drop-shadow(0 0 10px rgba(22, 242, 209, 0.25));">Nour</p>
+                <p style="font-size:0.82rem;color:var(--text-soft);">AI Engineer · Web Developer · UI/UX Designer</p>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;">
+                <a href="https://github.com/nour714/nour714" target="_blank" rel="noopener noreferrer"
+                    aria-label="GitHub"
+                    style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(148,183,255,0.3);background:rgba(30,50,120,0.3);display:inline-flex;align-items:center;justify-content:center;color:var(--text-soft);text-decoration:none;transition:border-color 0.2s ease,color 0.2s ease;">
+                    <i class="devicon-github-original" style="font-size:1.1rem;"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/nour-wael-aa63b7365?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                    target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+                    style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(148,183,255,0.3);background:rgba(30,50,120,0.3);display:inline-flex;align-items:center;justify-content:center;color:var(--text-soft);text-decoration:none;transition:border-color 0.2s ease,color 0.2s ease;">
+                    <i class="devicon-linkedin-plain" style="font-size:1.1rem;"></i>
+                </a>
+                <a href="https://wa.me/201021310147" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+                    style="width:38px;height:38px;border-radius:50%;border:1px solid rgba(148,183,255,0.3);background:rgba(30,50,120,0.3);display:inline-flex;align-items:center;justify-content:center;color:var(--text-soft);text-decoration:none;transition:border-color 0.2s ease,color 0.2s ease;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                </a>
+            </div>
+            <p
+                style="font-size:0.8rem;color:var(--text-soft);width:100%;text-align:center;border-top:1px solid rgba(108,148,255,0.1);padding-top:20px;margin-top:8px;">
+                &copy; 2026 All rights reserved — Developed by Nour Wael
+            </p>
+        </div>
+    </footer>
+
+    <script type="module" src="firebase-integration.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
