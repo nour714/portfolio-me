@@ -134,11 +134,11 @@ async function uploadPortfolioImageToStorage(file, folder = "projects") {
   return getDownloadURL(imageRef);
 }
 
-async function getIdToken() {
+async function getIdToken(forceRefresh = false) {
   if (!auth.currentUser) return null;
 
   try {
-    return await auth.currentUser.getIdToken();
+    return await auth.currentUser.getIdToken(forceRefresh);
   } catch {
     return null;
   }
@@ -178,7 +178,10 @@ function isRecoverableApiError(error) {
     message.includes("status 500") ||
     message.includes("status 502") ||
     message.includes("status 503") ||
-    message.includes("status 504")
+    message.includes("status 504") ||
+    message.includes("Invalid or expired admin token.") ||
+    message.includes("Admin token expired.") ||
+    message.includes("Server Firebase Admin is not configured.")
   );
 }
 
@@ -241,11 +244,19 @@ async function saveContactMessageSdk(message) {
   }
 }
 
-async function apiRequest(path, options = {}) {
+function buildApiError(response, payload) {
+  const error = new Error(payload?.error || `Request failed with status ${response.status}.`);
+  error.statusCode = response.status;
+  error.payload = payload;
+  return error;
+}
+
+async function performApiRequest(path, options = {}) {
   const {
     method = "GET",
     body,
-    requireAuth = false
+    requireAuth = false,
+    forceRefreshToken = false
   } = options;
 
   const headers = new Headers({
@@ -257,7 +268,7 @@ async function apiRequest(path, options = {}) {
   }
 
   if (requireAuth) {
-    const token = await getIdToken();
+    const token = await getIdToken(forceRefreshToken);
 
     if (!token) {
       throw new Error("Not authenticated - sign in first.");
@@ -289,10 +300,25 @@ async function apiRequest(path, options = {}) {
     : { error: await response.text() };
 
   if (!response.ok) {
-    throw new Error(payload?.error || `Request failed with status ${response.status}.`);
+    throw buildApiError(response, payload);
   }
 
   return payload;
+}
+
+async function apiRequest(path, options = {}) {
+  try {
+    return await performApiRequest(path, options);
+  } catch (error) {
+    if (!options?.requireAuth || Number(error?.statusCode) !== 401) {
+      throw error;
+    }
+
+    return performApiRequest(path, {
+      ...options,
+      forceRefreshToken: true
+    });
+  }
 }
 
 window.FirebaseAdminAPI = {
