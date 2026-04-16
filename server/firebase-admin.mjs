@@ -62,6 +62,20 @@ function adminAuth() {
   return getAuth(getFirebaseAdminApp());
 }
 
+function isFirebaseAdminConfigError(error) {
+  const message = String(error?.message || "").toLowerCase();
+  const code = String(error?.code || "").toLowerCase();
+
+  return (
+    message.includes("missing required environment variable:") ||
+    message.includes("failed to parse private key") ||
+    message.includes("failed to determine project id") ||
+    message.includes("invalid credential") ||
+    message.includes("credential") ||
+    code.startsWith("app/")
+  );
+}
+
 function getBearerToken(request) {
   const header = request.headers.get("authorization") || "";
 
@@ -114,6 +128,25 @@ export async function requireAdminUser(request) {
       user: decodedToken
     };
   } catch (error) {
+    if (isFirebaseAdminConfigError(error)) {
+      console.error("[API] Firebase Admin is not configured correctly:", error);
+      return {
+        ok: false,
+        response: errorResponse(
+          "Server Firebase Admin is not configured. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_ADMIN_PRIVATE_KEY in the deployment environment.",
+          500
+        )
+      };
+    }
+
+    if (String(error?.code || "").toLowerCase() === "auth/id-token-expired") {
+      console.error("[API] Admin token expired:", error);
+      return {
+        ok: false,
+        response: errorResponse("Admin token expired. Sign out and sign in again.", 401)
+      };
+    }
+
     console.error("[API] Admin token verification failed:", error);
     return {
       ok: false,
