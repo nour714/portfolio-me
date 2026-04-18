@@ -26,7 +26,7 @@ import {
   getDownloadURL,
   getStorage,
   ref as storageRef,
-  uploadBytes
+  uploadBytesResumable
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
@@ -115,23 +115,130 @@ function wrapFirestorePermissionError(error, actionLabel) {
   );
 }
 
-async function uploadPortfolioImageToStorage(file, folder = "projects") {
+function shouldOptimizeImageFile(file) {
+  return (
+    file instanceof File &&
+    String(file.type || "").startsWith("image/") &&
+    file.type !== "image/gif" &&
+    file.type !== "image/svg+xml"
+  );
+}
+
+async function optimizeImageFileForUpload(file, options = {}) {
+  if (!shouldOptimizeImageFile(file)) {
+    return file;
+  }
+
+  const maxDimension = Math.max(320, Number(options.maxDimension) || 1600);
+  const quality = Math.min(0.95, Math.max(0.55, Number(options.quality) || 0.82));
+  const outputType = "image/webp";
+
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+
+    const cleanup = () => URL.revokeObjectURL(objectUrl);
+
+    image.onload = () => {
+      const scale = Math.min(1, maxDimension / Math.max(image.width || 1, image.height || 1));
+      const width = Math.max(1, Math.round((image.width || 1) * scale));
+      const height = Math.max(1, Math.round((image.height || 1) * scale));
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+
+      if (!context) {
+        cleanup();
+        reject(new Error("Image compression is not supported in this browser."));
+        return;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      context.drawImage(image, 0, 0, width, height);
+
+      canvas.toBlob((blob) => {
+        cleanup();
+
+        if (!blob) {
+          reject(new Error("Could not optimize the selected image."));
+          return;
+        }
+
+        const baseName = String(file.name || `image-${Date.now()}`).replace(/\.[^.]+$/, "") || `image-${Date.now()}`;
+        const optimizedFile = new File([blob], `${baseName}.webp`, {
+          type: outputType,
+          lastModified: Date.now()
+        });
+
+        const shouldKeepOriginal = scale === 1 && optimizedFile.size >= file.size * 0.96;
+        resolve(shouldKeepOriginal ? file : optimizedFile);
+      }, outputType, quality);
+    };
+
+    image.onerror = () => {
+      cleanup();
+      reject(new Error("Could not read the selected image."));
+    };
+
+    image.src = objectUrl;
+  });
+}
+
+async function uploadPortfolioImageToStorage(file, folder = "projects", options = {}) {
   if (!(file instanceof File)) {
     throw new Error("A valid image file is required.");
   }
 
   ensureTrustedAdminUser();
 
-  const safeFolder = sanitizeStoragePathSegment(folder);
-  const safeName = sanitizeStoragePathSegment(file.name || `image-${Date.now()}`);
-  const imageRef = storageRef(storage, `portfolio/${safeFolder}/${Date.now()}-${safeName}`);
+  const {
+    onProgress,
+    maxDimension = 1600,
+    quality = 0.82
+  } = options || {};
 
-  await uploadBytes(imageRef, file, {
-    contentType: file.type || "application/octet-stream",
+  const uploadFile = await optimizeImageFileForUpload(file, { maxDimension, quality });
+  const safeFolder = sanitizeStoragePathSegment(folder);
+  const safeName = sanitizeStoragePathSegment(uploadFile.name || file.name || `image-${Date.now()}`);
+  const imageRef = storageRef(storage, `portfolio/${safeFolder}/${Date.now()}-${safeName}`);
+  const uploadTask = uploadBytesResumable(imageRef, uploadFile, {
+    contentType: uploadFile.type || file.type || "application/octet-stream",
     cacheControl: "public,max-age=31536000,immutable"
   });
 
-  return getDownloadURL(imageRef);
+  if (typeof onProgress === "function") {
+    onProgress({
+      bytesTransferred: 0,
+      totalBytes: uploadFile.size || file.size || 0,
+      progress: 0,
+      originalSize: file.size || 0,
+      uploadSize: uploadFile.size || file.size || 0,
+      optimized: uploadFile !== file
+    });
+  }
+
+  await new Promise((resolve, reject) => {
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        if (typeof onProgress !== "function") return;
+
+        const totalBytes = snapshot.totalBytes || uploadFile.size || file.size || 0;
+        onProgress({
+          bytesTransferred: snapshot.bytesTransferred || 0,
+          totalBytes,
+          progress: totalBytes ? (snapshot.bytesTransferred || 0) / totalBytes : 0,
+          originalSize: file.size || 0,
+          uploadSize: uploadFile.size || file.size || 0,
+          optimized: uploadFile !== file
+        });
+      },
+      reject,
+      resolve
+    );
+  });
+
+  return getDownloadURL(uploadTask.snapshot.ref);
 }
 
 async function getIdToken(forceRefresh = false) {
@@ -429,8 +536,8 @@ window.FirebaseAdminAPI = {
     }
   },
 
-  uploadPortfolioImage: async (file, folder = "projects") => {
-    return uploadPortfolioImageToStorage(file, folder);
+  uploadPortfolioImage: async (file, folder = "projects", options = {}) => {
+    return uploadPortfolioImageToStorage(file, folder, options);
   }
 };
 

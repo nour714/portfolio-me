@@ -106,6 +106,56 @@
         </div>
     </div>
 
+    <div id="project-ui-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="project-ui-modal-title"
+        aria-hidden="true">
+        <div class="project-ui-modal" role="document">
+            <button class="project-modal-close" id="project-ui-modal-close" aria-label="Close modal">
+                <svg viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+
+            <div class="project-ui-modal-media" id="project-ui-modal-media">
+                <div class="project-ui-modal-media__frame">
+                    <button type="button" class="project-ui-modal-nav project-ui-modal-nav--prev" id="project-ui-modal-prev"
+                        aria-label="Show previous image">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M15 18l-6-6 6-6"></path>
+                        </svg>
+                    </button>
+                    <img id="project-ui-modal-image" class="project-ui-modal-media__image" src="" alt="">
+                    <button type="button" class="project-ui-modal-nav project-ui-modal-nav--next" id="project-ui-modal-next"
+                        aria-label="Show next image">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 18l6-6-6-6"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="project-ui-modal-thumbs" id="project-ui-modal-thumbs" aria-label="Project screens"></div>
+            </div>
+
+            <div class="project-preview-modal__intro">
+                <div class="project-preview-modal__copy">
+                    <span class="project-preview-modal__eyebrow" id="project-ui-modal-eyebrow">UI</span>
+                    <h2 class="project-preview-modal__title" id="project-ui-modal-title">Project Details</h2>
+                    <p class="project-preview-modal__description" id="project-ui-modal-description"></p>
+                    <ul class="project-preview-modal__details" id="project-ui-modal-details"></ul>
+                </div>
+
+                <div class="project-preview-modal__meta">
+                    <ul class="project-preview-modal__tags" id="project-ui-modal-tags"></ul>
+                    <a href="#" class="project-preview-modal__external" id="project-ui-modal-external" target="_blank"
+                        rel="noopener noreferrer">
+                        View on GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Matrix Animated Background -->
     <canvas id="matrix-bg" aria-hidden="true"></canvas>
 

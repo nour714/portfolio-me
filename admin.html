@@ -212,7 +212,13 @@
             background: rgba(255, 255, 255, 0.06);
         }
         .admin-btn-danger {
+            color: #ff8a8a;
+            border-color: rgba(255, 82, 82, 0.28);
             background: rgba(255, 82, 82, 0.08);
+        }
+        .admin-btn-danger:hover {
+            border-color: rgba(255, 82, 82, 0.42);
+            background: rgba(255, 82, 82, 0.14);
         }
         .admin-main {
             display: grid;
@@ -363,6 +369,19 @@
             gap: 12px;
             margin-bottom: 18px;
         }
+        .admin-item-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .admin-item-remove {
+            min-height: 32px;
+            padding: 0 12px;
+            font-size: 0.76rem;
+            flex-shrink: 0;
+        }
         .admin-field {
             display: grid;
             gap: 8px;
@@ -436,6 +455,176 @@
         }
         .admin-upload-body strong {
             color: var(--text-main);
+        }
+        .admin-upload-progress {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(148, 183, 255, 0.14);
+        }
+        .admin-upload-progress > span {
+            display: block;
+            width: 0%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            transition: width 0.2s ease;
+        }
+        .admin-upload-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            color: var(--text-soft);
+            font-size: 0.72rem;
+            line-height: 1.5;
+        }
+        .admin-upload-meta strong {
+            color: var(--text-main);
+        }
+        .admin-project-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .admin-project-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at top right, rgba(94, 181, 255, 0.12), transparent 42%);
+            opacity: 0.85;
+        }
+        .admin-project-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        .admin-project-card__head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .admin-project-card__eyebrow {
+            display: inline-block;
+            margin-bottom: 8px;
+            color: var(--text-soft);
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+        .admin-project-card__name {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin: 0;
+        }
+        .admin-project-card__hint {
+            margin: 10px 0 0;
+            max-width: 60ch;
+            color: var(--text-soft);
+            font-size: 0.78rem;
+            line-height: 1.7;
+        }
+        .admin-project-card__badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 9px 14px;
+            min-height: 36px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 183, 255, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .admin-project-card__actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+        .admin-project-card__fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px 14px;
+        }
+        .admin-project-card__fields .admin-field {
+            margin-bottom: 0;
+        }
+        .admin-project-field--description,
+        .admin-project-field--details,
+        .admin-project-field--images {
+            grid-column: 1 / -1;
+        }
+        .admin-project-field--images textarea {
+            min-height: 132px;
+        }
+        .admin-project-card--ui {
+            border-color: rgba(94, 181, 255, 0.34);
+            background:
+                linear-gradient(135deg, rgba(255, 167, 92, 0.12), transparent 34%),
+                linear-gradient(180deg, rgba(76, 163, 255, 0.12), rgba(10, 20, 42, 0.72)),
+                rgba(12, 22, 46, 0.84);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.06),
+                0 18px 34px rgba(8, 15, 34, 0.2);
+        }
+        .admin-project-card--ui::before {
+            background:
+                radial-gradient(circle at top right, rgba(94, 181, 255, 0.24), transparent 44%),
+                radial-gradient(circle at bottom left, rgba(255, 167, 92, 0.16), transparent 40%);
+        }
+        .admin-project-card--ui .admin-project-card__badge {
+            border-color: rgba(94, 181, 255, 0.28);
+            background: linear-gradient(135deg, rgba(255, 162, 92, 0.92), rgba(72, 173, 255, 0.92));
+            color: #fff;
+            box-shadow: 0 10px 22px rgba(53, 123, 220, 0.18);
+        }
+        .admin-project-card--ui .admin-project-card__name {
+            font-size: 1.08rem;
+        }
+        .admin-project-card--ui .admin-project-card__hint {
+            color: rgba(228, 239, 255, 0.84);
+        }
+        .admin-project-card--ui .admin-project-field--images textarea,
+        .admin-project-card--ui .admin-project-field--image input {
+            border-color: rgba(94, 181, 255, 0.24);
+            background: rgba(7, 15, 31, 0.82);
+        }
+        .admin-project-card--ui .admin-upload {
+            border-color: rgba(94, 181, 255, 0.32);
+            background: rgba(7, 15, 31, 0.74);
+        }
+        body.light-mode .admin-project-card::before {
+            background: radial-gradient(circle at top right, rgba(94, 181, 255, 0.08), transparent 42%);
+        }
+        body.light-mode .admin-project-card__badge {
+            background: rgba(255, 255, 255, 0.72);
+        }
+        body.light-mode .admin-project-card--ui {
+            border-color: rgba(94, 146, 214, 0.24);
+            background:
+                linear-gradient(135deg, rgba(255, 177, 112, 0.18), transparent 36%),
+                linear-gradient(180deg, rgba(114, 187, 255, 0.12), rgba(255, 255, 255, 0.86));
+        }
+        body.light-mode .admin-project-card--ui .admin-project-card__hint {
+            color: rgba(24, 54, 92, 0.78);
+        }
+        body.light-mode .admin-project-card--ui .admin-project-field--images textarea,
+        body.light-mode .admin-project-card--ui .admin-project-field--image input {
+            background: rgba(255, 255, 255, 0.94);
         }
         .admin-preview {
             display: grid;
@@ -540,9 +729,17 @@
                 padding-left: 12px;
                 padding-right: 12px;
             }
+            .admin-project-card__head,
+            .admin-item-head,
             .admin-card-head {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+            .admin-project-card__actions {
+                justify-content: flex-start;
+            }
+            .admin-project-card__fields {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -1679,14 +1876,29 @@
                                 <span>Filter Buttons (use | to separate)</span>
                                 <input id="admin-projects-filters" type="text" placeholder="All | Portfolio | Web | UI | Dashboard">
                             </label>
+                            <p style="margin:12px 0 0;color:var(--text-soft);font-size:0.84rem;line-height:1.6;">
+                                Use one project with category <strong>ui</strong> only. Put all its screens inside
+                                <strong>Gallery Images</strong> using <strong>|</strong>.
+                            </p>
                         </div>
 
                         <div class="admin-card">
                             <div class="admin-card-head">
                                 <h3>Live Projects Manager</h3>
-                                <button class="admin-btn admin-btn-ghost" type="button" data-action="add-project">
-                                    Add Project
-                                </button>
+                                <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;">
+                                    <label class="admin-field" style="margin:0;min-width:190px;">
+                                        <span>Project Type To Add</span>
+                                        <select id="admin-projects-add-type">
+                                            <option value="portfolio">Portfolio</option>
+                                            <option value="web">Web</option>
+                                            <option value="dashboard">Dashboard</option>
+                                            <option value="ui">UI</option>
+                                        </select>
+                                    </label>
+                                    <button class="admin-btn admin-btn-ghost" type="button" data-action="add-project">
+                                        Add Project
+                                    </button>
+                                </div>
                             </div>
                             <div id="admin-projects-list" class="admin-list"></div>
                         </div>
@@ -2198,7 +2410,7 @@
                 const liveProjectsData = (() => {
                     try {
                         return typeof LIVE_PROJECTS !== "undefined" && Array.isArray(LIVE_PROJECTS)
-                            ? LIVE_PROJECTS
+                            ? LIVE_PROJECTS.filter((project) => !project?.isDemo)
                             : [];
                     } catch {
                         return [];
@@ -2206,31 +2418,14 @@
                 })();
 
                 const projectCards = (liveProjectsData.length
-                    ? liveProjectsData.map((project) => ({
-                        title: project.title || "",
-                        category: project.category || "",
-                        description: project.description || "",
-                        details: Array.isArray(project.details) ? project.details : [],
-                        stack: Array.isArray(project.stack) ? project.stack : [],
-                        meta: Array.isArray(project.meta) ? project.meta : [],
-                        highlights: Array.isArray(project.highlights) ? project.highlights : [],
-                        tech: Array.isArray(project.tech) ? project.tech : [],
-                        previewUrl: project.previewUrl || "",
-                        githubUrl: project.githubUrl || "",
-                        visual: project.visual || "",
-                        image: project.image || "",
-                        accent: project.accent || "",
-                        accentSoft: project.accentSoft || ""
-                    }))
-                    : Array.from(root.querySelectorAll(".project-card")).map((card) => ({
+                    ? liveProjectsData.map((project) => normalizeProjectForDashboard(project))
+                    : Array.from(root.querySelectorAll(".project-card")).map((card) => normalizeProjectForDashboard({
                         title: text(".project-title, h3", card),
                         category: card.dataset.category || "",
                         description: text(".project-description, p", card),
-                        details: [],
-                        stack: [],
-                        meta: normalizedList(".project-meta span", card),
                         highlights: normalizedList(".project-highlights li", card),
                         tech: normalizedList(".project-tech-tags li", card),
+                        meta: normalizedList(".project-meta span", card),
                         previewUrl: "",
                         githubUrl: href(".github-btn", card),
                         visual: "",
@@ -2241,7 +2436,7 @@
                     .filter((item) => item.title);
 
                 const projectFilters = liveProjectsData.length
-                    ? ["All", "Portfolio", "Web", "UI", "Dashboard"]
+                    ? Array.from(new Map(["All", "Portfolio", "Web", "UI", "Dashboard"].map((item) => [item.trim().toLowerCase(), item.trim()])).values())
                     : Array.from(root.querySelectorAll(".project-filters .filter-btn, .projects-filters .project-filter"))
                         .map((item) => item.textContent.replace(/\s+/g, " ").trim())
                         .filter(Boolean);
@@ -2385,6 +2580,360 @@
                 image.src = objectUrl;
             });
 
+            const normalizeProjectCategoryValue = (value = "") => String(value || "").trim().toLowerCase();
+
+            const normalizeProjectFiltersList = (filters = []) => Array.from(
+                new Map(
+                    (Array.isArray(filters) ? filters : [])
+                        .map((item) => String(item || "").trim())
+                        .filter(Boolean)
+                        .map((item) => [item.toLowerCase(), item])
+                ).values()
+            );
+
+            const normalizeProjectVisualValue = (value = "", category = "") => {
+                const explicit = String(value || "").trim().toLowerCase();
+                if (explicit) return explicit;
+
+                const normalizedCategory = normalizeProjectCategoryValue(category);
+                return normalizedCategory || "generic";
+            };
+
+            const cleanProjectArray = (value) => Array.isArray(value)
+                ? value.map((item) => String(item || "").trim()).filter(Boolean)
+                : [];
+
+            const normalizeProjectForDashboard = (item = {}) => {
+                const category = normalizeProjectCategoryValue(item.category || item.visual);
+                const details = cleanProjectArray(item.details);
+                const legacyHighlights = cleanProjectArray(item.highlights);
+                const stack = cleanProjectArray(item.stack);
+                const legacyTech = cleanProjectArray(item.tech);
+                const legacyMeta = cleanProjectArray(item.meta);
+                const explicitImages = cleanProjectArray(item.images);
+                const directImage = String(item.image || "").trim();
+                const images = explicitImages.length ? explicitImages : directImage ? [directImage] : [];
+
+                return {
+                    title: String(item.title || "").trim(),
+                    category,
+                    description: String(item.description || "").trim(),
+                    details: details.length ? details : legacyHighlights,
+                    stack: stack.length ? stack : legacyTech.length ? legacyTech : legacyMeta,
+                    images,
+                    previewUrl: String(item.previewUrl || "").trim(),
+                    githubUrl: String(item.githubUrl || "").trim(),
+                    visual: normalizeProjectVisualValue(item.visual, category),
+                    image: directImage || images[0] || "",
+                    accent: String(item.accent || "").trim(),
+                    accentSoft: String(item.accentSoft || "").trim()
+                };
+            };
+
+            const normalizeProjectsForDashboard = (items = []) => {
+                let uiProjectSeen = false;
+
+                return (Array.isArray(items) ? items : [])
+                    .filter((item) => item && !item.isDemo)
+                    .map(normalizeProjectForDashboard)
+                    .filter((item) => {
+                    if (!item || !String(item.title || "").trim()) return false;
+
+                    const isUi = normalizeProjectCategoryValue(item.category) === "ui";
+                    if (!isUi) return true;
+                    if (uiProjectSeen) return false;
+
+                    uiProjectSeen = true;
+                    return true;
+                });
+            };
+
+            const PROJECT_CATEGORY_OPTIONS = [
+                { value: "portfolio", label: "Portfolio" },
+                { value: "web", label: "Web" },
+                { value: "dashboard", label: "Dashboard" },
+                { value: "ui", label: "UI" }
+            ];
+
+            const PROJECT_CATEGORY_META = {
+                portfolio: {
+                    badge: "Portfolio",
+                    hint: "Standard project card with one cover image, summary, stack, and optional links."
+                },
+                web: {
+                    badge: "Web",
+                    hint: "Use this for websites and landing pages that keep the regular project layout."
+                },
+                dashboard: {
+                    badge: "Dashboard",
+                    hint: "Use this for admin panels and data-heavy products with the normal project card flow."
+                },
+                ui: {
+                    badge: "UI Gallery",
+                    hint: "UI uses one project only. Put every screen inside Gallery Images using |, and the first gallery image becomes the cover if Image URL is empty."
+                }
+            };
+
+            const toPipeList = (value = "") => String(value || "")
+                .split("|")
+                .map((part) => part.trim())
+                .filter(Boolean);
+
+            const getProjectEditorMeta = (category = "", title = "") => {
+                const key = normalizeProjectCategoryValue(category) || "portfolio";
+                const config = PROJECT_CATEGORY_META[key] || PROJECT_CATEGORY_META.portfolio;
+                const cleanTitle = String(title || "").trim();
+
+                return {
+                    key,
+                    badge: config.badge,
+                    hint: config.hint,
+                    displayTitle: cleanTitle || `${config.badge} Project`
+                };
+            };
+
+            const syncProjectEditorCard = (card, index = 0) => {
+                if (!card) return;
+
+                const titleValue = card.querySelector("[data-key='title']")?.value || "";
+                const categoryValue = card.querySelector("[data-key='category']")?.value || "";
+                const imagesCount = toPipeList(card.querySelector("[data-key='images']")?.value || "").length;
+                const meta = getProjectEditorMeta(categoryValue, titleValue);
+                const isUi = meta.key === "ui";
+
+                card.dataset.projectCategory = meta.key;
+                card.classList.toggle("admin-project-card--ui", isUi);
+                card.querySelector("[data-project-card-index]")?.replaceChildren(document.createTextNode(`Project ${index + 1}`));
+                card.querySelector("[data-project-card-title]")?.replaceChildren(document.createTextNode(meta.displayTitle));
+                card.querySelector("[data-project-card-badge]")?.replaceChildren(document.createTextNode(meta.badge));
+
+                const hint = card.querySelector("[data-project-card-hint]");
+                if (hint) {
+                    const uiSuffix = isUi && imagesCount ? ` ${imagesCount} screen${imagesCount === 1 ? "" : "s"} ready in the gallery.` : "";
+                    hint.textContent = `${meta.hint}${uiSuffix}`;
+                }
+            };
+
+            const createProjectDraft = (requestedCategory = "portfolio", items = []) => {
+                const category = normalizeProjectCategoryValue(requestedCategory) || "portfolio";
+                const nextNumber = (Array.isArray(items) ? items.length : 0) + 1;
+                const defaultTitles = {
+                    portfolio: `New Portfolio Project ${nextNumber}`,
+                    web: `New Web Project ${nextNumber}`,
+                    dashboard: `New Dashboard Project ${nextNumber}`,
+                    ui: "New UI Project"
+                };
+
+                return normalizeProjectForDashboard({
+                    title: defaultTitles[category] || `New Project ${nextNumber}`,
+                    category,
+                    description: "",
+                    details: [],
+                    stack: [],
+                    images: [],
+                    previewUrl: "",
+                    githubUrl: "",
+                    visual: category,
+                    image: "",
+                    accent: "",
+                    accentSoft: ""
+                });
+            };
+
+            const createAboutMetricDraft = (items = []) => ({
+                value: "",
+                label: ""
+            });
+
+            const createSkillGroupDraft = (items = []) => ({
+                title: "",
+                label: "",
+                items: []
+            });
+
+            const createServiceCategoryDraft = (items = []) => ({
+                name: ""
+            });
+
+            const createServiceDraft = (items = []) => ({
+                title: "",
+                description: "",
+                tags: []
+            });
+
+            const EDITABLE_COLLECTION_LABELS = {
+                "about.metrics": "Highlight",
+                "skills.groups": "Skill group",
+                "projects.items": "Project",
+                "services.categories": "Service category",
+                "services.items": "Service"
+            };
+
+            const createEditableRemoveButton = (collectionName, index) => {
+                const button = document.createElement("button");
+                const itemLabel = EDITABLE_COLLECTION_LABELS[collectionName] || "Item";
+
+                button.type = "button";
+                button.className = "admin-btn admin-btn-danger admin-item-remove";
+                button.dataset.removeCollection = collectionName;
+                button.dataset.removeIndex = String(index);
+                button.textContent = "Remove";
+                button.setAttribute("aria-label", `Remove ${itemLabel} ${index + 1}`);
+
+                return button;
+            };
+
+            const focusLastEditableCard = (containerSelector, preferredKey = "") => {
+                requestAnimationFrame(() => {
+                    const cards = Array.from(document.querySelectorAll(`${containerSelector} .admin-card`));
+                    const lastCard = cards[cards.length - 1];
+                    lastCard?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+                    const targetInput = preferredKey
+                        ? lastCard?.querySelector(`[data-key='${preferredKey}']`)
+                        : lastCard?.querySelector("[data-key]");
+
+                    targetInput?.focus();
+                    targetInput?.select?.();
+                });
+            };
+
+            const applyDashboardMutation = (mutate, successLabel, containerSelector, preferredKey = "") => {
+                const payload = collectDashboardData();
+                const shouldContinue = mutate(payload);
+                if (shouldContinue === false) return;
+
+                adminState.currentData = clone(payload);
+                populateDashboard(payload);
+                setSaveStatus(successLabel);
+
+                if (containerSelector) {
+                    focusLastEditableCard(containerSelector, preferredKey);
+                }
+            };
+
+            const removeEditableCollectionItem = (collectionName, index) => {
+                const itemLabel = EDITABLE_COLLECTION_LABELS[collectionName] || "Item";
+                if (!Number.isInteger(index) || index < 0) return;
+
+                const confirmed = window.confirm(`Remove this ${itemLabel.toLowerCase()}?`);
+                if (!confirmed) return;
+
+                applyDashboardMutation((payload) => {
+                    switch (collectionName) {
+                        case "about.metrics":
+                            payload.about.metrics = (Array.isArray(payload.about.metrics) ? payload.about.metrics : [])
+                                .filter((_, itemIndex) => itemIndex !== index);
+                            return true;
+                        case "skills.groups":
+                            payload.skills.groups = (Array.isArray(payload.skills.groups) ? payload.skills.groups : [])
+                                .filter((_, itemIndex) => itemIndex !== index);
+                            return true;
+                        case "projects.items":
+                            payload.projects.items = normalizeProjectsForDashboard(payload.projects.items)
+                                .filter((_, itemIndex) => itemIndex !== index);
+                            return true;
+                        case "services.categories":
+                            payload.services.categories = (Array.isArray(payload.services.categories) ? payload.services.categories : [])
+                                .filter((_, itemIndex) => itemIndex !== index);
+                            return true;
+                        case "services.items":
+                            payload.services.items = (Array.isArray(payload.services.items) ? payload.services.items : [])
+                                .filter((_, itemIndex) => itemIndex !== index);
+                            return true;
+                        default:
+                            return false;
+                    }
+                }, `${itemLabel} removed`);
+            };
+
+            const appendPipeListEntries = (input, values = []) => {
+                if (!input) return;
+
+                const merged = Array.from(new Map(
+                    [...toPipeList(input.value), ...(Array.isArray(values) ? values : [])]
+                        .map((value) => String(value || "").trim())
+                        .filter(Boolean)
+                        .map((value) => [value, value])
+                ).values());
+
+                input.value = merged.join(" | ");
+                input.dispatchEvent(new Event("input", { bubbles: true }));
+            };
+
+            const formatBytes = (bytes = 0) => {
+                const numericValue = Number(bytes) || 0;
+                if (!numericValue) return "0 B";
+
+                const units = ["B", "KB", "MB", "GB"];
+                const exponent = Math.min(Math.floor(Math.log(numericValue) / Math.log(1024)), units.length - 1);
+                const value = numericValue / (1024 ** exponent);
+                return `${value >= 10 || exponent === 0 ? value.toFixed(0) : value.toFixed(1)} ${units[exponent]}`;
+            };
+
+            const createUploadProgressUi = () => {
+                const progress = document.createElement("div");
+                progress.className = "admin-upload-progress";
+                progress.hidden = true;
+
+                const fill = document.createElement("span");
+                progress.appendChild(fill);
+
+                const meta = document.createElement("div");
+                meta.className = "admin-upload-meta";
+                meta.hidden = true;
+
+                const percent = document.createElement("strong");
+                percent.textContent = "0%";
+
+                const size = document.createElement("span");
+                size.textContent = "0 B / 0 B";
+
+                meta.appendChild(percent);
+                meta.appendChild(size);
+
+                return { progress, fill, meta, percent, size };
+            };
+
+            const setUploadProgressState = (parts, progressValue = 0, detailText = "") => {
+                if (!parts?.progress || !parts?.fill || !parts?.meta || !parts?.percent || !parts?.size) return;
+
+                const normalized = Math.max(0, Math.min(1, Number(progressValue) || 0));
+                parts.progress.hidden = false;
+                parts.meta.hidden = false;
+                parts.fill.style.width = `${Math.round(normalized * 100)}%`;
+                parts.percent.textContent = `${Math.round(normalized * 100)}%`;
+                parts.size.textContent = detailText || "Preparing...";
+            };
+
+            const resetUploadProgressState = (parts) => {
+                if (!parts?.progress || !parts?.fill || !parts?.meta || !parts?.percent || !parts?.size) return;
+
+                parts.progress.hidden = true;
+                parts.meta.hidden = true;
+                parts.fill.style.width = "0%";
+                parts.percent.textContent = "0%";
+                parts.size.textContent = "0 B / 0 B";
+            };
+
+            const runTasksWithConcurrency = async (items, limit, worker) => {
+                const safeItems = Array.isArray(items) ? items : [];
+                const concurrency = Math.max(1, Math.min(Number(limit) || 1, safeItems.length || 1));
+                const results = new Array(safeItems.length);
+                let nextIndex = 0;
+
+                const runners = Array.from({ length: concurrency }, async () => {
+                    while (nextIndex < safeItems.length) {
+                        const currentIndex = nextIndex;
+                        nextIndex += 1;
+                        results[currentIndex] = await worker(safeItems[currentIndex], currentIndex);
+                    }
+                });
+
+                await Promise.all(runners);
+                return results;
+            };
+
             const attachProjectImageUpload = ({ card, index, input }) => {
                 const upload = document.createElement("div");
                 upload.className = "admin-upload";
@@ -2413,6 +2962,7 @@
                 const status = document.createElement("span");
                 status.style.fontSize = "0.75rem";
                 status.style.color = "var(--text-soft)";
+                const progressUi = createUploadProgressUi();
 
                 const syncPreview = (value) => {
                     const url = String(value || "").trim();
@@ -2434,6 +2984,8 @@
                 body.appendChild(preview);
                 body.appendChild(title);
                 body.appendChild(hint);
+                body.appendChild(progressUi.progress);
+                body.appendChild(progressUi.meta);
                 body.appendChild(status);
 
                 upload.appendChild(fileInput);
@@ -2446,8 +2998,11 @@
                     const [file] = fileInput.files || [];
                     if (!file) return;
 
-                    status.textContent = "Uploading image...";
-                    setSaveStatus("Uploading image...", "saving");
+                    let latestUploadStats = null;
+
+                    status.textContent = "Preparing image...";
+                    setSaveStatus("Preparing image...", "saving");
+                    setUploadProgressState(progressUi, 0.04, `${formatBytes(file.size)} source`);
 
                     try {
                         const api = window.FirebaseAdminAPI;
@@ -2455,10 +3010,31 @@
                             throw new Error("Upload service is not ready yet.");
                         }
 
-                        const uploadedUrl = await api.uploadPortfolioImage(file, `projects/project-${index + 1}`);
+                        const uploadedUrl = await api.uploadPortfolioImage(file, `projects/project-${index + 1}`, {
+                            onProgress: (progressState) => {
+                                latestUploadStats = progressState;
+                                const transferred = progressState?.bytesTransferred || 0;
+                                const total = progressState?.totalBytes || progressState?.uploadSize || file.size || 0;
+                                const originalSize = progressState?.originalSize || file.size || 0;
+                                const detail = progressState?.optimized
+                                    ? `${formatBytes(transferred)} / ${formatBytes(total)} from ${formatBytes(originalSize)}`
+                                    : `${formatBytes(transferred)} / ${formatBytes(total)}`;
+
+                                setUploadProgressState(progressUi, progressState?.progress || 0, detail);
+                                status.textContent = `Uploading image... ${Math.round((progressState?.progress || 0) * 100)}%`;
+                            }
+                        });
+
                         input.value = uploadedUrl;
                         input.dispatchEvent(new Event("input", { bubbles: true }));
-                        status.textContent = "Image uploaded. Click Save to keep it.";
+                        setUploadProgressState(
+                            progressUi,
+                            1,
+                            `${formatBytes(latestUploadStats?.uploadSize || file.size)} uploaded`
+                        );
+                        status.textContent = latestUploadStats?.optimized
+                            ? "Image uploaded and optimized. Click Save to keep it."
+                            : "Image uploaded. Click Save to keep it.";
                         setSaveStatus("Image ready");
                     } catch (uploadError) {
                         console.warn("[Admin] Project image upload failed, using embedded fallback.", uploadError);
@@ -2467,9 +3043,11 @@
                             const embeddedUrl = await createEmbeddedImageDataUrl(file);
                             input.value = embeddedUrl;
                             input.dispatchEvent(new Event("input", { bubbles: true }));
+                            setUploadProgressState(progressUi, 1, `${formatBytes(file.size)} embedded locally`);
                             status.textContent = "Image embedded locally. Click Save to keep it.";
                             setSaveStatus("Image ready");
                         } catch (fallbackError) {
+                            resetUploadProgressState(progressUi);
                             status.textContent = fallbackError.message || uploadError.message || "Upload failed.";
                             setSaveStatus("Upload failed", "error");
                         }
@@ -2477,6 +3055,189 @@
                         fileInput.value = "";
                     }
                 });
+            };
+
+            const attachProjectGalleryUpload = ({ card, index, label, input }) => {
+                if (!card || !label || !input) return;
+
+                const upload = document.createElement("div");
+                upload.className = "admin-upload";
+                upload.style.marginTop = "10px";
+                upload.dataset.projectGalleryUpload = String(index);
+
+                const fileInput = document.createElement("input");
+                fileInput.type = "file";
+                fileInput.accept = "image/*";
+                fileInput.multiple = true;
+                fileInput.dataset.projectGalleryFileInput = String(index);
+
+                const body = document.createElement("div");
+                body.className = "admin-upload-body";
+                body.style.gap = "10px";
+
+                const title = document.createElement("strong");
+                const hint = document.createElement("span");
+                const status = document.createElement("span");
+                status.style.fontSize = "0.75rem";
+                status.style.color = "var(--text-soft)";
+                const progressUi = createUploadProgressUi();
+
+                const syncGalleryUploadUi = () => {
+                    const categoryValue = card.querySelector("[data-key='category']")?.value || "";
+                    const isUiProject = normalizeProjectCategoryValue(categoryValue) === "ui";
+                    const imagesCount = toPipeList(input.value).length;
+
+                    upload.style.display = isUiProject ? "" : "none";
+                    upload.hidden = !isUiProject;
+
+                    if (!isUiProject) {
+                        status.textContent = "";
+                        return;
+                    }
+
+                    title.textContent = imagesCount ? "Add more gallery screens" : "Upload UI gallery screens";
+                    hint.textContent = imagesCount
+                        ? `${imagesCount} screen${imagesCount === 1 ? "" : "s"} currently linked. You can upload more than one image at once for View Details.`
+                        : "Upload one or many images at once for the View Details gallery.";
+                };
+
+                body.appendChild(title);
+                body.appendChild(hint);
+                body.appendChild(progressUi.progress);
+                body.appendChild(progressUi.meta);
+                body.appendChild(status);
+
+                upload.appendChild(fileInput);
+                upload.appendChild(body);
+                label.appendChild(upload);
+
+                input.addEventListener("input", syncGalleryUploadUi);
+                card.querySelector("[data-key='category']")?.addEventListener("input", syncGalleryUploadUi);
+                card.querySelector("[data-key='category']")?.addEventListener("change", syncGalleryUploadUi);
+
+                fileInput.addEventListener("change", async () => {
+                    const files = Array.from(fileInput.files || []);
+                    if (!files.length) return;
+
+                    const uploadedUrls = [];
+                    let failedCount = 0;
+                    let optimizedCount = 0;
+                    let embeddedCount = 0;
+                    let lastError = "";
+                    const uploadStates = files.map((file) => ({
+                        bytesTransferred: 0,
+                        totalBytes: file.size || 1
+                    }));
+
+                    const updateGalleryProgress = (labelText = "Preparing gallery images...") => {
+                        const transferred = uploadStates.reduce((sum, item) => sum + (item.bytesTransferred || 0), 0);
+                        const total = uploadStates.reduce((sum, item) => sum + (item.totalBytes || 0), 0);
+                        const progressValue = total ? transferred / total : 0;
+
+                        setUploadProgressState(
+                            progressUi,
+                            progressValue,
+                            `${formatBytes(transferred)} / ${formatBytes(total)} across ${files.length} images`
+                        );
+                        status.textContent = `${labelText} ${Math.round(progressValue * 100)}%`;
+                    };
+
+                    setSaveStatus("Preparing gallery images...", "saving");
+                    updateGalleryProgress("Preparing gallery images...");
+
+                    const results = await runTasksWithConcurrency(files, 3, async (file, fileIndex) => {
+                        let fileOptimized = false;
+
+                        try {
+                            const api = window.FirebaseAdminAPI;
+                            if (!api?.uploadPortfolioImage) {
+                                throw new Error("Upload service is not ready yet.");
+                            }
+
+                            const uploadedUrl = await api.uploadPortfolioImage(file, `projects/project-${index + 1}/gallery`, {
+                                onProgress: (progressState) => {
+                                    uploadStates[fileIndex] = {
+                                        bytesTransferred: progressState?.bytesTransferred || 0,
+                                        totalBytes: progressState?.totalBytes || progressState?.uploadSize || file.size || 1
+                                    };
+                                    fileOptimized = Boolean(progressState?.optimized);
+                                    updateGalleryProgress(`Uploading ${fileIndex + 1} of ${files.length} images...`);
+                                }
+                            });
+
+                            uploadStates[fileIndex] = {
+                                bytesTransferred: uploadStates[fileIndex]?.totalBytes || file.size || 1,
+                                totalBytes: uploadStates[fileIndex]?.totalBytes || file.size || 1
+                            };
+                            updateGalleryProgress("Finalizing gallery uploads...");
+
+                            return {
+                                url: uploadedUrl,
+                                optimized: fileOptimized,
+                                embedded: false
+                            };
+                        } catch (uploadError) {
+                            console.warn("[Admin] Gallery image upload failed, using embedded fallback.", uploadError);
+
+                            try {
+                                const embeddedUrl = await createEmbeddedImageDataUrl(file);
+                                uploadStates[fileIndex] = {
+                                    bytesTransferred: file.size || 1,
+                                    totalBytes: file.size || 1
+                                };
+                                updateGalleryProgress("Finalizing gallery uploads...");
+
+                                return {
+                                    url: embeddedUrl,
+                                    optimized: true,
+                                    embedded: true
+                                };
+                            } catch (fallbackError) {
+                                failedCount += 1;
+                                lastError = fallbackError.message || uploadError.message || "Upload failed.";
+                                uploadStates[fileIndex] = {
+                                    bytesTransferred: 0,
+                                    totalBytes: file.size || 1
+                                };
+                                updateGalleryProgress("Continuing gallery uploads...");
+
+                                return {
+                                    url: "",
+                                    optimized: false,
+                                    embedded: false
+                                };
+                            }
+                        }
+                    });
+
+                    results.forEach((result) => {
+                        if (!result?.url) return;
+                        uploadedUrls.push(result.url);
+                        if (result.optimized) optimizedCount += 1;
+                        if (result.embedded) embeddedCount += 1;
+                    });
+
+                    if (uploadedUrls.length) {
+                        appendPipeListEntries(input, uploadedUrls);
+                        setUploadProgressState(progressUi, 1, `${formatBytes(files.reduce((sum, file) => sum + (file.size || 0), 0))} source processed`);
+                        const summaryParts = [];
+                        if (optimizedCount) summaryParts.push(`${optimizedCount} optimized`);
+                        if (embeddedCount) summaryParts.push(`${embeddedCount} embedded locally`);
+                        if (failedCount) summaryParts.push(`${failedCount} failed`);
+
+                        status.textContent = `${uploadedUrls.length} image${uploadedUrls.length === 1 ? "" : "s"} added to the View Details gallery${summaryParts.length ? ` (${summaryParts.join(", ")})` : "."}`;
+                        setSaveStatus("Gallery images ready");
+                    } else {
+                        resetUploadProgressState(progressUi);
+                        status.textContent = lastError || "Upload failed.";
+                        setSaveStatus("Upload failed", "error");
+                    }
+
+                    fileInput.value = "";
+                    syncGalleryUploadUi();
+                });
+
+                syncGalleryUploadUi();
             };
 
             const renderEditableList = (containerSelector, items, fields) => {
@@ -2492,35 +3253,120 @@
                     card.className = "admin-card";
                     card.style.padding = "16px";
 
-                    const title = document.createElement("h3");
-                    title.textContent = `${fields.titlePrefix} ${index + 1}`;
-                    title.style.marginBottom = "14px";
-                    card.appendChild(title);
+                    const isProjectCollection = fields.collection === "projects.items";
+                    const removeButton = createEditableRemoveButton(fields.collection, index);
+                    let fieldsHost = card;
+
+                    if (isProjectCollection) {
+                        card.classList.add("admin-project-card");
+
+                        const header = document.createElement("div");
+                        header.className = "admin-project-card__head";
+
+                        const headerCopy = document.createElement("div");
+
+                        const eyebrow = document.createElement("span");
+                        eyebrow.className = "admin-project-card__eyebrow";
+                        eyebrow.dataset.projectCardIndex = "";
+                        eyebrow.textContent = `${fields.titlePrefix} ${index + 1}`;
+
+                        const heading = document.createElement("h3");
+                        heading.className = "admin-project-card__name";
+                        heading.dataset.projectCardTitle = "";
+
+                        const hint = document.createElement("p");
+                        hint.className = "admin-project-card__hint";
+                        hint.dataset.projectCardHint = "";
+
+                        headerCopy.appendChild(eyebrow);
+                        headerCopy.appendChild(heading);
+                        headerCopy.appendChild(hint);
+
+                        const badge = document.createElement("span");
+                        badge.className = "admin-project-card__badge";
+                        badge.dataset.projectCardBadge = "";
+
+                        const actions = document.createElement("div");
+                        actions.className = "admin-project-card__actions";
+                        actions.appendChild(badge);
+                        actions.appendChild(removeButton);
+
+                        header.appendChild(headerCopy);
+                        header.appendChild(actions);
+                        card.appendChild(header);
+
+                        fieldsHost = document.createElement("div");
+                        fieldsHost.className = "admin-project-card__fields";
+                        card.appendChild(fieldsHost);
+                    } else {
+                        const header = document.createElement("div");
+                        header.className = "admin-item-head";
+
+                        const title = document.createElement("h3");
+                        title.textContent = `${fields.titlePrefix} ${index + 1}`;
+                        title.style.margin = "0";
+
+                        header.appendChild(title);
+                        header.appendChild(removeButton);
+                        card.appendChild(header);
+                    }
 
                     fields.inputs.forEach((field) => {
                         const label = document.createElement("label");
                         label.className = "admin-field";
+                        if (isProjectCollection) {
+                            label.classList.add("admin-project-field", `admin-project-field--${field.key}`);
+                            label.dataset.projectField = field.key;
+                        }
 
                         const span = document.createElement("span");
                         span.textContent = field.label;
                         label.appendChild(span);
 
-                        const input = document.createElement(field.multiline ? "textarea" : "input");
-                        if (!field.multiline) input.type = field.type || "text";
-                        if (field.multiline) input.rows = field.rows || 3;
+                        let input;
+                        if (isProjectCollection && field.key === "category") {
+                            input = document.createElement("select");
+                            const normalizedCategory = normalizeProjectCategoryValue(item[field.key] || item.visual || "portfolio") || "portfolio";
+                            PROJECT_CATEGORY_OPTIONS.forEach((optionConfig) => {
+                                const option = document.createElement("option");
+                                option.value = optionConfig.value;
+                                option.textContent = optionConfig.label;
+                                input.appendChild(option);
+                            });
+                            input.value = normalizedCategory;
+                        } else {
+                            input = document.createElement(field.multiline ? "textarea" : "input");
+                            if (!field.multiline) input.type = field.type || "text";
+                            if (field.multiline) input.rows = field.rows || 3;
+                        }
+
                         input.dataset.collection = fields.collection;
                         input.dataset.index = String(index);
                         input.dataset.key = field.key;
 
                         const value = item[field.key];
-                        input.value = Array.isArray(value) ? value.join(" | ") : (value ?? "");
+                        if (!(isProjectCollection && field.key === "category")) {
+                            input.value = Array.isArray(value) ? value.join(" | ") : (value ?? "");
+                        }
                         label.appendChild(input);
-                        card.appendChild(label);
+                        fieldsHost.appendChild(label);
 
                         if (fields.collection === "projects.items" && field.key === "image") {
                             attachProjectImageUpload({ card, index, input });
                         }
+
+                        if (fields.collection === "projects.items" && field.key === "images") {
+                            attachProjectGalleryUpload({ card, index, label, input });
+                        }
                     });
+
+                    if (isProjectCollection) {
+                        card.querySelector("[data-key='title']")?.addEventListener("input", () => syncProjectEditorCard(card, index));
+                        card.querySelector("[data-key='images']")?.addEventListener("input", () => syncProjectEditorCard(card, index));
+                        card.querySelector("[data-key='category']")?.addEventListener("input", () => syncProjectEditorCard(card, index));
+                        card.querySelector("[data-key='category']")?.addEventListener("change", () => syncProjectEditorCard(card, index));
+                        syncProjectEditorCard(card, index);
+                    }
 
                     container.appendChild(card);
                 });
@@ -2557,7 +3403,7 @@
                 setValue("admin-projects-copy", data.projects.copy);
                 setValue("admin-projects-summary-label", data.projects.summaryLabel);
                 setValue("admin-projects-summary-copy", data.projects.summaryCopy);
-                setValue("admin-projects-filters", (data.projects.filters || []).join(" | "));
+                setValue("admin-projects-filters", normalizeProjectFiltersList(data.projects.filters || []).join(" | "));
 
                 setValue("admin-services-title", data.services.title);
                 setValue("admin-services-copy", data.services.copy);
@@ -2606,7 +3452,7 @@
                     ]
                 });
 
-                renderEditableList(selectors.projects, data.projects.items, {
+                renderEditableList(selectors.projects, normalizeProjectsForDashboard(data.projects.items), {
                     collection: "projects.items",
                     titlePrefix: "Project",
                     inputs: [
@@ -2615,11 +3461,9 @@
                         { key: "description", label: "Description", multiline: true, rows: 3 },
                         { key: "details", label: "Details (use |)", multiline: true, rows: 3 },
                         { key: "stack", label: "Stack (use |)", multiline: true, rows: 2 },
-                        { key: "meta", label: "Meta (legacy)", multiline: true, rows: 2 },
-                        { key: "highlights", label: "Highlights (legacy)", multiline: true, rows: 3 },
-                        { key: "tech", label: "Tech Stack (legacy)", multiline: true, rows: 2 },
+                        { key: "images", label: "Gallery Images (UI, use |)", multiline: true, rows: 3 },
                         { key: "previewUrl", label: "Preview URL", type: "url" },
-                        { key: "visual", label: "Visual Type" },
+                        { key: "visual", label: "Visual Type (optional)" },
                         { key: "image", label: "Image URL", type: "text" },
                         { key: "githubUrl", label: "GitHub URL", type: "url" },
                         { key: "accent", label: "Accent Color" },
@@ -2661,7 +3505,7 @@
                     .sort((a, b) => a[0] - b[0])
                     .map(([, item]) => Object.fromEntries(
                         Object.entries(item).map(([key, raw]) => {
-                            if (["items", "details", "stack", "meta", "highlights", "tech", "tags"].includes(key)) {
+                            if (["items", "details", "stack", "images", "tags"].includes(key)) {
                                 return [key, raw.split("|").map((part) => part.trim()).filter(Boolean)];
                             }
                             return [key, raw];
@@ -2706,8 +3550,8 @@
                     copy: valueOf("admin-projects-copy"),
                     summaryLabel: valueOf("admin-projects-summary-label"),
                     summaryCopy: valueOf("admin-projects-summary-copy"),
-                    filters: valueOf("admin-projects-filters").split("|").map((item) => item.trim()).filter(Boolean),
-                    items: collectCollection("projects.items")
+                    filters: normalizeProjectFiltersList(valueOf("admin-projects-filters").split("|").map((item) => item.trim()).filter(Boolean)),
+                    items: normalizeProjectsForDashboard(collectCollection("projects.items"))
                 },
                 services: {
                     title: valueOf("admin-services-title"),
@@ -2817,6 +3661,62 @@
                 if (!adminState.originalData) return;
                 populateDashboard(clone(adminState.originalData));
                 setSaveStatus("Reset complete");
+            });
+
+            document.querySelector('[data-action="add-about-metric"]')?.addEventListener("click", () => {
+                applyDashboardMutation((payload) => {
+                    const currentMetrics = Array.isArray(payload.about.metrics) ? payload.about.metrics : [];
+                    payload.about.metrics = [...currentMetrics, createAboutMetricDraft(currentMetrics)];
+                }, "Highlight added", selectors.heroMetrics, "value");
+            });
+
+            document.querySelector('[data-action="add-skill-group"]')?.addEventListener("click", () => {
+                applyDashboardMutation((payload) => {
+                    const currentGroups = Array.isArray(payload.skills.groups) ? payload.skills.groups : [];
+                    payload.skills.groups = [...currentGroups, createSkillGroupDraft(currentGroups)];
+                }, "Skill group added", selectors.skillGroups, "title");
+            });
+
+            document.querySelector('[data-action="add-project"]')?.addEventListener("click", () => {
+                const typeSelect = document.getElementById("admin-projects-add-type");
+                const requestedCategory = normalizeProjectCategoryValue(typeSelect?.value || "portfolio");
+                applyDashboardMutation((payload) => {
+                    const currentProjects = normalizeProjectsForDashboard(payload.projects.items);
+
+                    if (requestedCategory === "ui" && currentProjects.some((item) => normalizeProjectCategoryValue(item.category) === "ui")) {
+                        setSaveStatus("UI project already exists in the dashboard", "error");
+                        typeSelect?.focus();
+                        return false;
+                    }
+
+                    payload.projects.items = [...currentProjects, createProjectDraft(requestedCategory, currentProjects)];
+                }, `${requestedCategory.toUpperCase()} project added`, selectors.projects, "title");
+            });
+
+            document.querySelector('[data-action="add-service-category"]')?.addEventListener("click", () => {
+                applyDashboardMutation((payload) => {
+                    const currentCategories = Array.isArray(payload.services.categories) ? payload.services.categories : [];
+                    payload.services.categories = [
+                        ...currentCategories,
+                        createServiceCategoryDraft(currentCategories).name
+                    ];
+                }, "Service category added", selectors.serviceCategories, "name");
+            });
+
+            document.querySelector('[data-action="add-service"]')?.addEventListener("click", () => {
+                applyDashboardMutation((payload) => {
+                    const currentServices = Array.isArray(payload.services.items) ? payload.services.items : [];
+                    payload.services.items = [...currentServices, createServiceDraft(currentServices)];
+                }, "Service added", selectors.services, "title");
+            });
+
+            document.addEventListener("click", (event) => {
+                const button = event.target.closest("[data-remove-collection]");
+                if (!button) return;
+
+                const collectionName = button.dataset.removeCollection || "";
+                const index = Number(button.dataset.removeIndex);
+                removeEditableCollectionItem(collectionName, index);
             });
 
             document.getElementById("admin-save")?.addEventListener("click", async () => {

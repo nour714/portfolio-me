@@ -153,6 +153,38 @@ const toCleanArray = (value) => Array.isArray(value)
     ? value.map((item) => String(item ?? "").trim()).filter(Boolean)
     : [];
 
+const dedupeArray = (items = []) => items.filter((item, index) => items.indexOf(item) === index);
+
+const normalizeProjectCategory = (value = "") => String(value || "").trim().toLowerCase();
+
+const isUiProject = (project = {}) => normalizeProjectCategory(project.category) === "ui";
+
+const normalizeProjectImages = (project = {}, fallback = {}) => {
+    const explicitImages = dedupeArray([
+        ...toCleanArray(project.images),
+        ...toCleanArray(project.gallery)
+    ]);
+    if (explicitImages.length) return explicitImages;
+
+    const directImage = String(project.image || "").trim();
+    if (directImage) return [directImage];
+
+    const fallbackImages = dedupeArray([
+        ...toCleanArray(fallback.images),
+        ...toCleanArray(fallback.gallery)
+    ]);
+    if (fallbackImages.length) return fallbackImages;
+
+    const fallbackImage = String(fallback.image || "").trim();
+    return fallbackImage ? [fallbackImage] : [];
+};
+
+const sanitizeLiveProjects = (projects = []) => (
+    Array.isArray(projects)
+        ? projects.filter((project) => project && !project.isDemo)
+        : []
+);
+
 const getServicePreset = (index = 0) => {
     if (!SERVICE_SHOWCASE_PRESETS.length) {
         return { eyebrow: "Digital Services", tags: [] };
@@ -230,6 +262,8 @@ const normalizeProjectItem = (project = {}, index = 0) => {
             : toCleanArray(project.meta).length
                 ? toCleanArray(project.meta)
                 : toCleanArray(fallback.stack);
+    const images = normalizeProjectImages(project, fallback);
+    const primaryImage = String(project.image || "").trim() || images[0] || String(fallback.image || "").trim();
 
     return {
         ...fallback,
@@ -242,7 +276,8 @@ const normalizeProjectItem = (project = {}, index = 0) => {
         previewUrl: project.previewUrl || fallback.previewUrl || "#",
         githubUrl: project.githubUrl || fallback.githubUrl || "#",
         visual: project.visual || fallback.visual || "generic",
-        image: project.image || fallback.image || "",
+        image: primaryImage,
+        images,
         accent: project.accent || fallback.accent || "#16f2d1",
         accentSoft: project.accentSoft || fallback.accentSoft || "rgba(22, 242, 209, 0.2)"
     };
@@ -389,7 +424,10 @@ const applyPortfolioContent = (data = {}) => {
         setTextIfPresent(".live-projects-summary strong", data.projects.summaryCopy);
 
         if (Array.isArray(data.projects.items) && data.projects.items.length) {
-            LIVE_PROJECTS = data.projects.items.map(normalizeProjectItem);
+            const sanitizedProjects = sanitizeLiveProjects(data.projects.items);
+            if (sanitizedProjects.length) {
+                LIVE_PROJECTS = sanitizedProjects.map(normalizeProjectItem);
+            }
         }
 
         if (Array.isArray(data.projects.filters) && data.projects.filters.length) {
@@ -477,7 +515,144 @@ const buildGithubLink = (project) => `
     </a>
 `;
 
+const buildProjectDetailsButton = (project, index) => `
+    <button
+        type="button"
+        class="live-project-link live-project-link--primary live-project-link--details"
+        data-ui-project-details="${index}"
+        aria-label="View details for ${escapeHtml(project.title)}"
+    >
+        <span>View Details</span>
+    </button>
+`;
+
+const getProjectPrimaryCategoryLabel = (project = {}) => {
+    const category = normalizeProjectCategory(project.category) || "project";
+    return category
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+const buildProjectUiGallery = (project) => {
+    const images = toCleanArray(project.images);
+    if (!images.length) return "";
+
+    const countLabel = `${images.length} ${images.length === 1 ? "screen" : "screens"}`;
+    const navigationControls = images.length > 1
+        ? `
+            <button
+                type="button"
+                class="live-project-ui-gallery__nav live-project-ui-gallery__nav--prev"
+                data-gallery-nav="prev"
+                aria-label="Show previous image for ${escapeHtml(project.title)}"
+            >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M15 18l-6-6 6-6"></path>
+                </svg>
+            </button>
+            <button
+                type="button"
+                class="live-project-ui-gallery__nav live-project-ui-gallery__nav--next"
+                data-gallery-nav="next"
+                aria-label="Show next image for ${escapeHtml(project.title)}"
+            >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M9 18l6-6-6-6"></path>
+                </svg>
+            </button>
+        `
+        : "";
+
+    return `
+        <div
+            class="live-project-card__visual live-project-card__visual--ui-gallery"
+            role="group"
+            aria-label="UI gallery for ${escapeHtml(project.title)}"
+        >
+            <div class="live-project-ui-gallery${images.length === 1 ? " live-project-ui-gallery--single" : ""}">
+                ${images.map((src, index) => `
+                    <figure class="live-project-ui-gallery__item">
+                        <img
+                            src="${escapeHtml(src)}"
+                            alt="${escapeHtml(`${project.title} screen ${index + 1}`)}"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    </figure>
+                `).join("")}
+            </div>
+            ${navigationControls}
+            <span class="live-project-ui-gallery__count">${escapeHtml(countLabel)}</span>
+        </div>
+    `;
+};
+
+const getProjectGalleryStep = (track) => {
+    if (!track) return 0;
+    const firstItem = track.querySelector(".live-project-ui-gallery__item");
+    const computedStyle = window.getComputedStyle(track);
+    const gap = Number.parseFloat(computedStyle.columnGap || computedStyle.gap || "0") || 0;
+    return (firstItem?.getBoundingClientRect().width || track.clientWidth * 0.82) + gap;
+};
+
+const updateProjectGalleryNavState = (galleryVisual) => {
+    const track = galleryVisual?.querySelector(".live-project-ui-gallery");
+    const prevButton = galleryVisual?.querySelector("[data-gallery-nav='prev']");
+    const nextButton = galleryVisual?.querySelector("[data-gallery-nav='next']");
+    if (!track || !prevButton || !nextButton) return;
+
+    const maxScrollLeft = Math.max(0, track.scrollWidth - track.clientWidth);
+    const currentScroll = track.scrollLeft;
+    const threshold = 6;
+    prevButton.disabled = currentScroll <= threshold;
+    nextButton.disabled = currentScroll >= maxScrollLeft - threshold || maxScrollLeft <= threshold;
+};
+
+const syncProjectGalleryNavs = (root = document) => {
+    root.querySelectorAll(".live-project-card__visual--ui-gallery").forEach((galleryVisual) => {
+        const track = galleryVisual.querySelector(".live-project-ui-gallery");
+        if (!track) return;
+
+        if (track.dataset.galleryScrollBound !== "true") {
+            track.dataset.galleryScrollBound = "true";
+            track.addEventListener("scroll", () => updateProjectGalleryNavState(galleryVisual), { passive: true });
+        }
+
+        updateProjectGalleryNavState(galleryVisual);
+    });
+};
+
+const initProjectGalleryNavigation = () => {
+    if (document.body.dataset.projectGalleryNavBound === "true") return;
+    document.body.dataset.projectGalleryNavBound = "true";
+
+    document.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-gallery-nav]");
+        if (!button) return;
+
+        const galleryVisual = button.closest(".live-project-card__visual--ui-gallery");
+        const track = galleryVisual?.querySelector(".live-project-ui-gallery");
+        if (!galleryVisual || !track) return;
+
+        event.preventDefault();
+
+        const direction = button.dataset.galleryNav === "next" ? 1 : -1;
+        track.scrollBy({
+            left: getProjectGalleryStep(track) * direction,
+            behavior: "smooth"
+        });
+    });
+
+    window.addEventListener("resize", () => syncProjectGalleryNavs(), { passive: true });
+    syncProjectGalleryNavs();
+};
+
 const buildProjectVisual = (project) => {
+    // Keep the multi-image treatment scoped to UI projects only.
+    if (isUiProject(project) && toCleanArray(project.images).length) {
+        return buildProjectUiGallery(project);
+    }
+
     if (project.image) {
         return `
             <div class="live-project-card__visual live-project-card__visual--image" aria-hidden="true" 
@@ -536,14 +711,28 @@ const renderLiveProjects = (filter = "all") => {
 
     const filteredProjects = filter === "all" 
         ? LIVE_PROJECTS 
-        : LIVE_PROJECTS.filter(p => p.category === filter);
+        : LIVE_PROJECTS.filter((project) => normalizeProjectCategory(project.category) === normalizeProjectCategory(filter));
 
     grid.innerHTML = filteredProjects.map((project, idx) => {
         // Re-find the real index in the global array for the modal
         const globalIndex = LIVE_PROJECTS.indexOf(project);
+        const uiProject = isUiProject(project);
+        const isUiGalleryCard = uiProject && toCleanArray(project.images).length;
+        const projectActions = uiProject
+            ? `
+                <div class="live-project-card__actions live-project-card__actions--single">
+                    ${buildProjectDetailsButton(project, globalIndex)}
+                </div>
+            `
+            : `
+                <div class="live-project-card__actions">
+                    ${buildProjectPreviewButton(project, globalIndex)}
+                    ${buildGithubLink(project)}
+                </div>
+            `;
         
         return `
-            <article class="project-card live-project-card is-visible" 
+            <article class="project-card live-project-card is-visible${isUiGalleryCard ? " live-project-card--ui" : ""}" 
                      style="--project-accent: ${project.accent}; --project-accent-soft: ${project.accentSoft}; animation: cardFadeIn 0.5s ease forwards ${idx * 0.1}s; opacity: 0;">
                 ${buildProjectVisual(project)}
 
@@ -556,15 +745,15 @@ const renderLiveProjects = (filter = "all") => {
                     ${project.stack.map((tag) => `<li class="live-project-tag is-visible">${escapeHtml(tag)}</li>`).join("")}
                 </ul>
 
-                <div class="live-project-card__actions">
-                    ${buildProjectPreviewButton(project, globalIndex)}
-                    ${buildGithubLink(project)}
-                </div>
+                ${projectActions}
             </article>
         `;
     }).join("");
 
-    requestAnimationFrame(() => refreshAnimatedCards());
+    requestAnimationFrame(() => {
+        syncProjectGalleryNavs(grid);
+        refreshAnimatedCards();
+    });
 };
 
 /**
@@ -1110,6 +1299,154 @@ const initModals = () => {
     });
 };
 
+const initUiProjectModal = () => {
+    const overlay = document.getElementById("project-ui-modal-overlay");
+    const modalEl = overlay?.querySelector(".project-ui-modal");
+    const closeBtn = document.getElementById("project-ui-modal-close");
+    const titleEl = document.getElementById("project-ui-modal-title");
+    const descEl = document.getElementById("project-ui-modal-description");
+    const detailsEl = document.getElementById("project-ui-modal-details");
+    const tagsEl = document.getElementById("project-ui-modal-tags");
+    const eyebrowEl = document.getElementById("project-ui-modal-eyebrow");
+    const externalLinkEl = document.getElementById("project-ui-modal-external");
+    const imageEl = document.getElementById("project-ui-modal-image");
+    const thumbsEl = document.getElementById("project-ui-modal-thumbs");
+    const prevButton = document.getElementById("project-ui-modal-prev");
+    const nextButton = document.getElementById("project-ui-modal-next");
+    if (!overlay || !modalEl || !closeBtn || !titleEl || !descEl || !detailsEl || !tagsEl || !eyebrowEl || !externalLinkEl || !imageEl || !thumbsEl || !prevButton || !nextButton) return;
+
+    let lastTrigger = null;
+    let activeUiImages = [];
+    let activeUiImageIndex = 0;
+
+    const syncUiNavState = () => {
+        const hasMultipleImages = activeUiImages.length > 1;
+        prevButton.hidden = !hasMultipleImages;
+        nextButton.hidden = !hasMultipleImages;
+        prevButton.disabled = !hasMultipleImages || activeUiImageIndex <= 0;
+        nextButton.disabled = !hasMultipleImages || activeUiImageIndex >= activeUiImages.length - 1;
+    };
+
+    const syncUiActiveImage = (index = 0, projectTitle = "Project") => {
+        if (!activeUiImages.length) {
+            imageEl.removeAttribute("src");
+            imageEl.alt = "";
+            thumbsEl.innerHTML = "";
+            syncUiNavState();
+            return;
+        }
+
+        activeUiImageIndex = Math.max(0, Math.min(index, activeUiImages.length - 1));
+        imageEl.src = activeUiImages[activeUiImageIndex];
+        imageEl.alt = `${projectTitle} showcase ${activeUiImageIndex + 1}`;
+        syncUiNavState();
+
+        thumbsEl.querySelectorAll("[data-ui-modal-image-index]").forEach((button, buttonIndex) => {
+            const isActive = buttonIndex === activeUiImageIndex;
+            button.classList.toggle("is-active", isActive);
+            button.setAttribute("aria-pressed", String(isActive));
+        });
+    };
+
+    const renderUiModalMedia = (project) => {
+        activeUiImages = toCleanArray(project.images).length
+            ? toCleanArray(project.images)
+            : normalizeProjectImages(project);
+
+        thumbsEl.innerHTML = activeUiImages.length > 1
+            ? activeUiImages.map((src, index) => `
+                <button
+                    type="button"
+                    class="project-ui-modal-thumb"
+                    data-ui-modal-image-index="${index}"
+                    aria-label="Show screen ${index + 1} for ${escapeHtml(project.title)}"
+                    aria-pressed="false"
+                >
+                    <img src="${escapeHtml(src)}" alt="${escapeHtml(`${project.title} thumbnail ${index + 1}`)}" loading="lazy" decoding="async">
+                </button>
+            `).join("")
+            : "";
+
+        thumbsEl.hidden = activeUiImages.length <= 1;
+        syncUiActiveImage(0, project.title);
+    };
+
+    const openModal = (project, trigger) => {
+        if (!project) return;
+
+        lastTrigger = trigger || null;
+        modalEl.style.setProperty("--project-accent", project.accent || "#16f2d1");
+        modalEl.style.setProperty("--project-accent-soft", project.accentSoft || "rgba(22, 242, 209, 0.2)");
+        eyebrowEl.textContent = getProjectPrimaryCategoryLabel(project);
+        titleEl.textContent = project.title;
+        descEl.textContent = project.description;
+        detailsEl.innerHTML = (project.details || [])
+            .map((detail) => `<li class="project-preview-modal__detail">${escapeHtml(detail)}</li>`)
+            .join("");
+        tagsEl.innerHTML = project.stack.map((tag) => `<li>${escapeHtml(tag)}</li>`).join("");
+        renderUiModalMedia(project);
+
+        externalLinkEl.href = project.githubUrl || "#";
+        externalLinkEl.hidden = !String(project.githubUrl || "").trim();
+
+        overlay.classList.add("is-open");
+        overlay.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        closeBtn.focus();
+    };
+
+    const closeModal = () => {
+        overlay.classList.remove("is-open");
+        overlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        lastTrigger?.focus();
+    };
+
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-ui-project-details]");
+        if (!btn) return;
+
+        const project = LIVE_PROJECTS[Number(btn.dataset.uiProjectDetails)];
+        openModal(project, btn);
+    });
+
+    document.addEventListener("click", (e) => {
+        const thumb = e.target.closest("[data-ui-modal-image-index]");
+        if (!thumb) return;
+        syncUiActiveImage(Number(thumb.dataset.uiModalImageIndex || 0), titleEl.textContent || "Project");
+    });
+
+    prevButton.addEventListener("click", () => {
+        syncUiActiveImage(activeUiImageIndex - 1, titleEl.textContent || "Project");
+    });
+
+    nextButton.addEventListener("click", () => {
+        syncUiActiveImage(activeUiImageIndex + 1, titleEl.textContent || "Project");
+    });
+
+    closeBtn.addEventListener("click", closeModal);
+    overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeModal();
+    });
+    document.addEventListener("keydown", (e) => {
+        if (overlay.classList.contains("is-open")) {
+            if (e.key === "ArrowLeft") {
+                e.preventDefault();
+                syncUiActiveImage(activeUiImageIndex - 1, titleEl.textContent || "Project");
+                return;
+            }
+
+            if (e.key === "ArrowRight") {
+                e.preventDefault();
+                syncUiActiveImage(activeUiImageIndex + 1, titleEl.textContent || "Project");
+                return;
+            }
+        }
+
+        if (e.key === "Escape" && overlay.classList.contains("is-open")) closeModal();
+    });
+};
+
 /**
  * Counter Animation
  */
@@ -1175,8 +1512,10 @@ const boot = () => {
     initTyping();
     initMatrix();
     renderLiveProjects();
+    initProjectGalleryNavigation();
     refreshAnimatedCards();
     initModals();
+    initUiProjectModal();
     initCounters();
     initBackToTop();
     initProjectFilters();
