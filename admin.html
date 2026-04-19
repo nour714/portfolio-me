@@ -2087,7 +2087,7 @@
                     </div>
                 </div>
                 <div class="admin-preview-foot">
-                    <span class="admin-preview-note">Preview loads the current public site.</span>
+                    <span class="admin-preview-note">Preview uses this deployment. It refreshes after saving to show the latest public content.</span>
                 </div>
             </aside>
 
@@ -3733,6 +3733,7 @@
                     await api.savePortfolioData(payload);
                     adminState.originalData = clone(payload);
                     adminState.currentData = clone(payload);
+                    document.getElementById("admin-preview-refresh")?.click();
                     setSaveStatus("Saved");
                 } catch (error) {
                     console.error("[Admin] Save failed:", error);
