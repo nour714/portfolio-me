@@ -275,17 +275,17 @@ function serializeFirestoreValue(value) {
 
 function isRecoverableApiError(error) {
   const message = String(error?.message || "");
+  const statusCode = Number(error?.statusCode || 0);
+
+  if ([404, 405].includes(statusCode) || statusCode >= 500) {
+    return true;
+  }
+
   return (
     message.includes("Failed to fetch") ||
     message.includes("non-JSON response") ||
     message.includes("unexpected portfolio payload") ||
     message.includes("unexpected messages payload") ||
-    message.includes("status 404") ||
-    message.includes("status 405") ||
-    message.includes("status 500") ||
-    message.includes("status 502") ||
-    message.includes("status 503") ||
-    message.includes("status 504") ||
     message.includes("Invalid or expired admin token.") ||
     message.includes("Admin token expired.") ||
     message.includes("Server Firebase Admin is not configured.")
