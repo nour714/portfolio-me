@@ -3,6 +3,11 @@
  * Cleaned & Optimized Version
  */
 
+// Vercel Analytics
+import { inject } from '@vercel/analytics';
+
+inject();
+
 // Configuration & Constants
 const ROLE_TYPING_SPEED = 70;
 const ROLE_DELETE_SPEED = 40;
