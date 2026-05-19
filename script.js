@@ -443,7 +443,13 @@ const applyPortfolioContent = (data = {}) => {
         if (Array.isArray(data.projects.items) && data.projects.items.length) {
             const sanitizedProjects = sanitizeLiveProjects(data.projects.items);
             if (sanitizedProjects.length) {
-                LIVE_PROJECTS = sanitizedProjects.map(normalizeProjectItem);
+                const remoteProjects = sanitizedProjects.map(normalizeProjectItem);
+                const remoteUrls = new Set(remoteProjects.map(p => String(p.previewUrl || "").trim().toLowerCase()));
+                // Keep local-only projects (e.g. StockPro) that Firestore doesn't have yet
+                const localOnlyProjects = LIVE_PROJECTS.filter(
+                    p => !remoteUrls.has(String(p.previewUrl || "").trim().toLowerCase())
+                );
+                LIVE_PROJECTS = [...remoteProjects, ...localOnlyProjects];
             }
         }
 
