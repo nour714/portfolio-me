@@ -107,6 +107,23 @@ let LIVE_PROJECTS = [
         image: "images/img4.png",
         accent: "#d4a373",
         accentSoft: "rgba(212, 163, 115, 0.2)"
+    },
+    {
+        title: "StockPro | Smart Warehouse & Inventory Dashboard",
+        category: "dashboard",
+        description: "A premium, responsive inventory management system with real-time stock tracking, warehouse logistics, supplier/customer logs, and automated invoice generation.",
+        details: [
+            "Demo Access: admin@warehouse.com",
+            "Password: password",
+            "Features: Real-time stock movements, invoice printing, multi-warehouse control, and analytics"
+        ],
+        stack: ["Node.js", "Express", "MySQL", "Vercel"],
+        previewUrl: "https://stock-pro-lyart.vercel.app/",
+        githubUrl: "https://github.com/nour714/StockPro.git",
+        visual: "dashboard",
+        image: "images/img5.png",
+        accent: "#06b6d4",
+        accentSoft: "rgba(6, 182, 212, 0.15)"
     }
 ];
 
