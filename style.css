@@ -2230,7 +2230,7 @@ body.light-mode .filter-btn.is-active {
 
 .live-project-card__visual--image {
     background-size: cover;
-    background-position: center top;
+    background-position: center;
     background-repeat: no-repeat;
     transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
