@@ -4109,3 +4109,42 @@ body.light-mode .service-features li {
         letter-spacing: 0.16em;
     }
 }
+
+/* Floating Social Icons Styles */
+.hero-float-icon {
+    color: var(--text-soft);
+    text-decoration: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+body.light-mode .hero-float-icon {
+    color: rgba(15, 23, 42, 0.6);
+}
+
+.hero-float-icon:hover {
+    color: var(--text-main);
+}
+
+.hero-float-icon.icon-1:hover {
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+body.light-mode .hero-float-icon.icon-1:hover {
+    border-color: rgba(15, 23, 42, 0.6);
+    box-shadow: 0 0 20px rgba(15, 23, 42, 0.15);
+    color: #0f172a;
+}
+
+.hero-float-icon.icon-2:hover {
+    border-color: rgba(37, 211, 102, 0.6);
+    box-shadow: 0 0 20px rgba(37, 211, 102, 0.35);
+    color: #25d366;
+}
+
+.hero-float-icon.icon-3:hover {
+    border-color: rgba(24, 119, 242, 0.6);
+    box-shadow: 0 0 20px rgba(24, 119, 242, 0.35);
+    color: #1877f2;
+}
