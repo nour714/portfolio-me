@@ -13,8 +13,11 @@ export async function GET() {
       data: snapshot.exists ? serializeFirestoreValue(snapshot.data()) : null
     });
   } catch (error) {
-    console.error("[API] Failed to load portfolio data:", error);
-    return errorResponse("Failed to load portfolio data.", 500);
+    console.warn("[API] GET /api/portfolio fallback to client SDK:", error?.message || error);
+    return jsonResponse({
+      data: null,
+      fallback: true
+    });
   }
 }
 

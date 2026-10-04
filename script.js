@@ -241,14 +241,29 @@ const setLinkIfPresent = (selector, { text = "", href = "" } = {}, root = docume
 const setImageIfPresent = (selector, { src = "", alt = "" } = {}, root = document) => {
     const el = root.querySelector(selector);
     if (!el) return;
-    if (String(src).trim()) {
-        el.setAttribute("src", src);
-        el.setAttribute("data-fallback-src", src);
+    let cleanSrc = String(src).trim();
+    if (cleanSrc === "images/img.jpg" || cleanSrc.endsWith("/img.jpg")) {
+        cleanSrc = "images/img.png";
+    }
+    if (cleanSrc) {
+        el.setAttribute("src", cleanSrc);
+        el.setAttribute("data-fallback-src", cleanSrc);
     }
     if (String(alt).trim()) {
         el.setAttribute("alt", alt);
     }
 };
+
+// Global Image Error Fallback Handler
+document.addEventListener("error", (e) => {
+    if (e.target && e.target.tagName === "IMG") {
+        const img = e.target;
+        if (!img.dataset.hasFallbackTriggered) {
+            img.dataset.hasFallbackTriggered = "true";
+            img.src = "images/img.png";
+        }
+    }
+}, true);
 
 const fallbackBadge = (value = "") => escapeHtml(
     String(value)

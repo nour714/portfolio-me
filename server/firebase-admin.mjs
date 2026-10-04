@@ -36,7 +36,11 @@ function requiredEnv(name) {
 }
 
 function getPrivateKey() {
-  return requiredEnv("FIREBASE_ADMIN_PRIVATE_KEY").replace(/\\n/g, "\n");
+  let key = requiredEnv("FIREBASE_ADMIN_PRIVATE_KEY").trim();
+  if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) {
+    key = key.slice(1, -1).trim();
+  }
+  return key.replace(/\\n/g, "\n");
 }
 
 function getFirebaseAdminApp() {
